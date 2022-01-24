@@ -9,5 +9,4 @@ class CruitApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
