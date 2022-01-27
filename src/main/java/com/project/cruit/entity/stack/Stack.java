@@ -2,6 +2,8 @@ package com.project.cruit.entity.stack;
 
 import com.project.cruit.entity.PartStack;
 import com.project.cruit.entity.UserStack;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
+@Getter
 public abstract class Stack {
 
     @Id
@@ -25,4 +28,11 @@ public abstract class Stack {
     @OneToMany(mappedBy = "stack")
     private List<PartStack> partStacks;
 
+    public Stack(String name, String image) {
+        this.name = name;
+        this.image = image;
+    }
+
+    public Stack() {
+    }
 }
