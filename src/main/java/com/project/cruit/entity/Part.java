@@ -1,10 +1,13 @@
 package com.project.cruit.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 public class Part {
     @Id
     @GeneratedValue
@@ -25,4 +28,8 @@ public class Part {
     @OneToMany(mappedBy = "part")
     private List<UserPart> userParts = new ArrayList<>();
 
+    public Part(Project project, Position position) {
+        this.project = project;
+        this.position = position;
+    }
 }

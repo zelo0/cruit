@@ -3,8 +3,6 @@ package com.project.cruit.entity.stack;
 import com.project.cruit.entity.PartStack;
 import com.project.cruit.entity.UserStack;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -21,6 +19,8 @@ public abstract class Stack {
 
     private String name;
     private String image;
+    @Column(insertable = false, updatable = false)
+    private String dtype;
 
     @OneToMany(mappedBy = "stack")
     private List<UserStack> userStacks;

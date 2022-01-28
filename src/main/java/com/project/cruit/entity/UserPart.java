@@ -1,8 +1,12 @@
 package com.project.cruit.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class UserPart {
     @Id
     @GeneratedValue
@@ -18,4 +22,13 @@ public class UserPart {
     private Part part;
 
     private Boolean isLeader;
+
+    public UserPart() {
+    }
+
+    public UserPart(User user, Part part, Boolean isLeader) {
+        this.user = user;
+        this.part = part;
+        this.isLeader = isLeader;
+    }
 }

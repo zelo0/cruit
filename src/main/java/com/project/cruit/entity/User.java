@@ -2,6 +2,7 @@ package com.project.cruit.entity;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -47,4 +48,17 @@ public class User {
     private List<Question> questions = new ArrayList<>();
 
     private Boolean canBeLeader;
+
+
+    public User() {
+    }
+
+    public User(String email, String password, String name, Position position, String github, Boolean canBeLeader) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.position = position;
+        this.github = github;
+        this.canBeLeader = canBeLeader;
+    }
 }

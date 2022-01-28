@@ -24,6 +24,10 @@ public class UserService {
         return userRepository.save(user).getId();
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id).get();
+    }
+
     public Boolean checkDuplicateName(String name) {
         return userRepository.existsByName(name);
     }

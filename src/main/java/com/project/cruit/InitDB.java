@@ -14,5 +14,6 @@ public class InitDB {
     @PostConstruct
     public void initStackDB() {
         initService.initStack();
+        initService.sampleProject();
     }
 }

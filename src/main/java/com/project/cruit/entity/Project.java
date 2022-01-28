@@ -1,10 +1,13 @@
 package com.project.cruit.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 public class Project {
     @Id
     @GeneratedValue
@@ -30,4 +33,15 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Part> parts = new ArrayList<>();
+
+    public Project() {
+    }
+
+    public Project(User proposer, String name, String description) {
+        this.proposer = proposer;
+        this.name = name;
+        this.description = description;
+        this.status = ProjectStatus.RECRUITING;
+    }
+
 }
