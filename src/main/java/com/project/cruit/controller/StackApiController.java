@@ -2,6 +2,7 @@ package com.project.cruit.controller;
 
 import com.project.cruit.entity.stack.Stack;
 import com.project.cruit.repository.StackRepository;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -20,13 +21,13 @@ public class StackApiController {
     private final StackRepository stackRepository;
 
     @GetMapping("/api/stacks")
-//    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseWrapper stacks() {
         List<StackDto> response = stackRepository.findAll().stream().map(StackDto::new).collect(Collectors.toList());
         return new ResponseWrapper(response);
     }
 
     @Data
+    @AllArgsConstructor
     static class StackDto {
         private String name;
         private String image;

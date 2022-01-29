@@ -57,8 +57,10 @@ public class InitService {
 
     public void sampleProject() {
         User user1 = new User("test@gmail.com", "1234", "(테스트) 주니어 백엔드", Position.BACKEND, "test@gihub.com", false);
+        user1.setProfile("https://w7.pngwing.com/pngs/193/722/png-transparent-red-and-blue-spider-man-illustration-spider-man-miles-morales-marvel-comics-spider-man-heroes-superhero-fictional-character-thumbnail.png");
         userRepository.save(user1);
         User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", Position.BACKEND, "test2@gihub.com", true);
+        user2.setProfile("https://w7.pngwing.com/pngs/549/240/png-transparent-marvel-iron-man-iron-man-hulk-spider-man-ultron-ironman-avengers-heroes-superhero-thumbnail.png");
         userRepository.save(user2);
 
         Project project = new Project(user1, "test 프로젝트1", "test 프로젝트입니다. 테스트");

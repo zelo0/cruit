@@ -19,6 +19,10 @@ public class ProjectService {
     private final PartService partService;
     private final UserPartService userPartService;
 
+    public List<Project> findAll() {
+        return projectRepository.findAll();
+    }
+
     @Transactional
     public void saveProject(Project project) {
         projectRepository.save(project);
@@ -33,12 +37,15 @@ public class ProjectService {
             case FRONTEND:
                 userPart = new UserPart(project.getProposer(), frontendPart, false);
                 frontendPart.getUserParts().add(userPart);
+                break;
             case BACKEND:
                 userPart = new UserPart(project.getProposer(), backendPart, false);
                 backendPart.getUserParts().add(userPart);
+                break;
             case DESIGN:
                 userPart = new UserPart(project.getProposer(), designPart, false);
                 designPart.getUserParts().add(userPart);
+                break;
         }
         userPartService.saveUserPart(userPart);
 

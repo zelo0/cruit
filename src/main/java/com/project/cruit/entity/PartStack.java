@@ -1,10 +1,12 @@
 package com.project.cruit.entity;
 
 import com.project.cruit.entity.stack.Stack;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class PartStack {
     @Id
     @GeneratedValue

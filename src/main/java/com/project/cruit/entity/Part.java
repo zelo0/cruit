@@ -32,4 +32,7 @@ public class Part {
         this.project = project;
         this.position = position;
     }
+
+    public Part() {
+    }
 }
