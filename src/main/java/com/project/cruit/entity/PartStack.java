@@ -1,5 +1,6 @@
 package com.project.cruit.entity;
 
+import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.stack.Stack;
 import lombok.Getter;
 

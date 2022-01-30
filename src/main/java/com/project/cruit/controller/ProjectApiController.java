@@ -1,7 +1,9 @@
 package com.project.cruit.controller;
 
 import com.project.cruit.entity.*;
+import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.stack.Stack;
+import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class ProjectApiController {
     private final ProjectService projectService;
     private final UserService userService;
+    private final PartService partService;
 
     @GetMapping("/api/projects")
     public ResponseWrapper<ReadProjectResponse> allProjects() {
@@ -47,7 +50,7 @@ public class ProjectApiController {
     }
 
     @Data
-    static class ReadProjectResponse {
+    private class ReadProjectResponse {
         private String proposerProfile;
         private String proposerName;
         private ProjectStatus status;
@@ -57,30 +60,15 @@ public class ProjectApiController {
         private PartDto backendPart;
         private PartDto designPart;
 
-
-
         public ReadProjectResponse(Project project) {
             proposerProfile = project.getProposer().getProfile();
             proposerName = project.getProposer().getName();
             status = project.getStatus();
             description = project.getDescription();
             name = project.getName();
-
-            List<Part> partList = project.getParts();
-            for (Part part : partList) {
-                PartDto partDto = new PartDto(part);
-                switch (part.getPosition()) {
-                    case FRONTEND:
-                        frontendPart = partDto;
-                        break;
-                    case BACKEND:
-                        backendPart = partDto;
-                        break;
-                    case DESIGN:
-                        designPart = partDto;
-                        break;
-                }
-            }
+            frontendPart = new PartDto(partService.getFrontendPart(project));
+            backendPart = new PartDto(partService.getBackendPart(project));
+            designPart = new PartDto(partService.getDesignPart(project));
         }
     }
 

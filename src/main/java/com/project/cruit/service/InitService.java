@@ -24,6 +24,7 @@ public class InitService {
     private final StackService stackService;
     private final UserRepository userRepository;
     private final ProjectService projectService;
+    private final PartService partService;
 
     public void initStack() {
         List<Stack> stacks = new ArrayList<>();
@@ -55,6 +56,7 @@ public class InitService {
 //
 //    }
 
+
     public void sampleProject() {
         User user1 = new User("test@gmail.com", "1234", "(테스트) 주니어 백엔드", Position.BACKEND, "test@gihub.com", false);
         user1.setProfile("https://w7.pngwing.com/pngs/193/722/png-transparent-red-and-blue-spider-man-illustration-spider-man-miles-morales-marvel-comics-spider-man-heroes-superhero-fictional-character-thumbnail.png");
@@ -65,5 +67,6 @@ public class InitService {
 
         Project project = new Project(user1, "test 프로젝트1", "test 프로젝트입니다. 테스트");
         projectService.saveProject(project);
+        partService.getBackendPart(project).addMember(user2);
     }
 }

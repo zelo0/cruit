@@ -1,9 +1,10 @@
 package com.project.cruit.service;
 
-import com.project.cruit.entity.Part;
-import com.project.cruit.entity.Position;
+import com.project.cruit.entity.part.BackendPart;
+import com.project.cruit.entity.part.DesignPart;
+import com.project.cruit.entity.part.FrontendPart;
+import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.Project;
-import com.project.cruit.entity.UserPart;
 import com.project.cruit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ProjectService {
     private final ProjectRepository projectRepository;
-    private final PartService partService;
-    private final UserPartService userPartService;
 
     public List<Project> findAll() {
         return projectRepository.findAll();
@@ -27,27 +26,24 @@ public class ProjectService {
     public void saveProject(Project project) {
         projectRepository.save(project);
 
-        Part frontendPart = new Part(project, Position.FRONTEND);
-        Part backendPart = new Part(project, Position.BACKEND);
-        Part designPart = new Part(project, Position.DESIGN);
-        partService.saveParts(List.of(frontendPart, backendPart, designPart));
+        Part frontendPart = new FrontendPart(project);
+        Part backendPart = new BackendPart(project);
+        Part designPart = new DesignPart(project);
 
-        UserPart userPart = null;
         switch (project.getProposer().getPosition()) {
             case FRONTEND:
-                userPart = new UserPart(project.getProposer(), frontendPart, false);
-                frontendPart.getUserParts().add(userPart);
+                frontendPart.addMember(project.getProposer());
                 break;
             case BACKEND:
-                userPart = new UserPart(project.getProposer(), backendPart, false);
-                backendPart.getUserParts().add(userPart);
+                backendPart.addMember(project.getProposer());
                 break;
             case DESIGN:
-                userPart = new UserPart(project.getProposer(), designPart, false);
-                designPart.getUserParts().add(userPart);
+                designPart.addMember(project.getProposer());
                 break;
         }
-        userPartService.saveUserPart(userPart);
 
+        project.addPart(frontendPart);
+        project.addPart(backendPart);
+        project.addPart(designPart);
     }
 }

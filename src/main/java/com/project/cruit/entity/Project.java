@@ -1,5 +1,9 @@
 package com.project.cruit.entity;
 
+import com.project.cruit.entity.part.BackendPart;
+import com.project.cruit.entity.part.DesignPart;
+import com.project.cruit.entity.part.FrontendPart;
+import com.project.cruit.entity.part.Part;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -31,8 +35,20 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Question> questions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<Part> parts = new ArrayList<>();
+
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "frontend_part_id")
+//    private FrontendPart frontendPart;
+//
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "backend_part_id")
+//    private BackendPart backendPart;
+//
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "design_part_id")
+//    private DesignPart designPart;
 
     public Project() {
     }
@@ -44,4 +60,7 @@ public class Project {
         this.status = ProjectStatus.RECRUITING;
     }
 
+    public void addPart(Part part) {
+        parts.add(part);
+    }
 }

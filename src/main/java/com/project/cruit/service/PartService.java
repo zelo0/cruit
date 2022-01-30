@@ -1,6 +1,8 @@
 package com.project.cruit.service;
 
-import com.project.cruit.entity.Part;
+import com.project.cruit.entity.Project;
+import com.project.cruit.entity.User;
+import com.project.cruit.entity.part.Part;
 import com.project.cruit.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,19 @@ import java.util.List;
 public class PartService {
     private final PartRepository partRepository;
 
+    @Transactional
     public void saveParts(List<Part> partList) {
         partRepository.saveAll(partList);
+    }
+
+
+    public Part getBackendPart(Project project) {
+        return partRepository.findByProjectAndPosition(project, "backend");
+    }
+    public Part getFrontendPart(Project project) {
+        return partRepository.findByProjectAndPosition(project, "frontend");
+    }
+    public Part getDesignPart(Project project) {
+        return partRepository.findByProjectAndPosition(project, "design");
     }
 }
