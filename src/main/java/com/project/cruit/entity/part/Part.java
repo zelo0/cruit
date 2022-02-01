@@ -1,6 +1,7 @@
 package com.project.cruit.entity.part;
 
 import com.project.cruit.entity.*;
+import com.project.cruit.entity.stack.Stack;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public abstract class Part {
     @Column(insertable = false, updatable = false)
     private String position;
 
-    @OneToMany(mappedBy = "part")
+    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL)
     private List<PartStack> partStacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "part", cascade = CascadeType.ALL)
@@ -48,4 +49,7 @@ public abstract class Part {
     public void addMember(User user) {
         userParts.add(new UserPart(user, this));
     }
+
+    public void addStack(Stack stack) {
+        partStacks.add(new PartStack(this, stack));}
 }

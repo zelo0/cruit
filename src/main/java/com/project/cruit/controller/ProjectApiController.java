@@ -25,11 +25,12 @@ public class ProjectApiController {
 
     @GetMapping("/api/projects")
     public ResponseWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter) {
-        List<Project> projects = new ArrayList<>();
+        List<Project> projects;
         if (stackFilter.isBlank()) {
             projects =projectService.findAll();
         } else {
-            List<String> stackFilterList = List.of(stackFilter.split("&"));
+            List<String> stackFilterList = List.of(stackFilter.split(";"));
+            System.out.println("stackFilterList = " + stackFilterList);
             projects = projectService.findByStackFilter(stackFilterList);
         }
         List<ReadProjectResponse> responses = projects.stream().map(ReadProjectResponse::new).collect(Collectors.toList());

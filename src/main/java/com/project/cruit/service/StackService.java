@@ -18,4 +18,8 @@ public class StackService {
     public void saveStacks(List<Stack> stackList) {
         stackRepository.saveAll(stackList);
     }
+
+    public Stack findByName(String stackName) {
+        return stackRepository.findByName(stackName);
+    }
 }

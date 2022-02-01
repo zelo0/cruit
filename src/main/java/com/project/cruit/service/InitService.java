@@ -3,6 +3,7 @@ package com.project.cruit.service;
 import com.project.cruit.entity.Position;
 import com.project.cruit.entity.Project;
 import com.project.cruit.entity.User;
+import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.stack.BackendStack;
 import com.project.cruit.entity.stack.FrontendStack;
 import com.project.cruit.entity.stack.Stack;
@@ -71,10 +72,17 @@ public class InitService {
 
         Project project = new Project(user1, "test 프로젝트1", "test 프로젝트입니다. 테스트");
         projectService.saveProject(project);
-        partService.getBackendPart(project).addMember(user2);
-        partService.getFrontendPart(project).addMember(user3);
+        Part backendPart = partService.getBackendPart(project);
+        backendPart.addMember(user2);
+        backendPart.addStack(stackService.findByName("spring"));
+        backendPart.addStack(stackService.findByName("hibernate"));
+        Part frontendPart = partService.getFrontendPart(project);
+        frontendPart.addMember(user3);
+        frontendPart.addStack(stackService.findByName("react"));
 
         Project project2 = new Project(user3, "test2", "test 2번째입니다.");
         projectService.saveProject(project2);
+        Part frontendPart1 = partService.getFrontendPart(project2);
+        frontendPart1.addStack(stackService.findByName("vue.js"));
     }
 }
