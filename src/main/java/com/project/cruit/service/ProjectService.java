@@ -46,4 +46,8 @@ public class ProjectService {
         project.addPart(backendPart);
         project.addPart(designPart);
     }
+
+    public List<Project> findByStackFilter(List<String> stacks) {
+        return projectRepository.findByStackFilter(stacks);
+    }
 }
