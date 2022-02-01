@@ -64,9 +64,17 @@ public class InitService {
         User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", Position.BACKEND, "test2@gihub.com", true);
         user2.setProfile("https://w7.pngwing.com/pngs/549/240/png-transparent-marvel-iron-man-iron-man-hulk-spider-man-ultron-ironman-avengers-heroes-superhero-thumbnail.png");
         userRepository.save(user2);
+        User user3 = new User("test3@gmail.com", "1234", "(테스트) 리액트 개발자", Position.FRONTEND, "test3@gihub.com", true);
+        user3.setProfile("https://w7.pngwing.com/pngs/732/154/png-transparent-pokemon-meowth-whiskers-meowth-pokemon-go-ash-ketchum-pokemon-go-mammal-cat-like-mammal-carnivoran-thumbnail.png");
+        userRepository.save(user3);
+
 
         Project project = new Project(user1, "test 프로젝트1", "test 프로젝트입니다. 테스트");
         projectService.saveProject(project);
         partService.getBackendPart(project).addMember(user2);
+        partService.getFrontendPart(project).addMember(user3);
+
+        Project project2 = new Project(user3, "test2", "test 2번째입니다.");
+        projectService.saveProject(project2);
     }
 }
