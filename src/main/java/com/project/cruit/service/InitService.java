@@ -1,5 +1,6 @@
 package com.project.cruit.service;
 
+import com.project.cruit.entity.PartStatus;
 import com.project.cruit.entity.Position;
 import com.project.cruit.entity.Project;
 import com.project.cruit.entity.User;
@@ -76,6 +77,7 @@ public class InitService {
         backendPart.addMember(user2);
         backendPart.addStack(stackService.findByName("spring"));
         backendPart.addStack(stackService.findByName("hibernate"));
+        partService.setStatus(backendPart, PartStatus.COMPLETED);
         Part frontendPart = partService.getFrontendPart(project);
         frontendPart.addMember(user3);
         frontendPart.addStack(stackService.findByName("react"));

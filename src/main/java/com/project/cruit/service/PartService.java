@@ -1,5 +1,6 @@
 package com.project.cruit.service;
 
+import com.project.cruit.entity.PartStatus;
 import com.project.cruit.entity.Project;
 import com.project.cruit.entity.User;
 import com.project.cruit.entity.part.Part;
@@ -21,6 +22,10 @@ public class PartService {
         partRepository.saveAll(partList);
     }
 
+    @Transactional
+    public void setStatus(Part part, PartStatus status) {
+        part.setStatus(status);
+    }
 
     public Part getBackendPart(Project project) {
         return partRepository.findByProjectAndPosition(project, "backend");

@@ -30,7 +30,6 @@ public class ProjectApiController {
             projects =projectService.findAll();
         } else {
             List<String> stackFilterList = List.of(stackFilter.split(";"));
-            System.out.println("stackFilterList = " + stackFilterList);
             projects = projectService.findByStackFilter(stackFilterList);
         }
         List<ReadProjectResponse> responses = projects.stream().map(ReadProjectResponse::new).collect(Collectors.toList());
@@ -57,7 +56,7 @@ public class ProjectApiController {
     private class ReadProjectResponse {
         private String proposerProfile;
         private String proposerName;
-        private ProjectStatus status;
+        private PartStatus status;
         private String description;
         private String name;
         private PartDto frontendPart;
@@ -67,7 +66,6 @@ public class ProjectApiController {
         public ReadProjectResponse(Project project) {
             proposerProfile = project.getProposer().getProfile();
             proposerName = project.getProposer().getName();
-            status = project.getStatus();
             description = project.getDescription();
             name = project.getName();
             frontendPart = new PartDto(partService.getFrontendPart(project));
@@ -78,10 +76,12 @@ public class ProjectApiController {
 
     @Data
     static class PartDto {
+        private PartStatus status;
         private List<StackDto> stacks = new ArrayList<>();
         private List<UserDto> partMembers = new ArrayList<>();
 
         public PartDto(Part part) {
+            status = part.getStatus();
             List<PartStack> partStacks = part.getPartStacks();
             for (PartStack partStack : partStacks) {
                 Stack stack = partStack.getStack();
