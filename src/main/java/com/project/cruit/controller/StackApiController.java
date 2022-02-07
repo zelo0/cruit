@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class StackApiController {
     private final StackRepository stackRepository;
 
-    @GetMapping("/api/stacks")
+    @GetMapping("/api/v1/stacks")
     public ResponseWrapper stacks() {
         List<StackDto> response = stackRepository.findAll().stream().map(StackDto::new).collect(Collectors.toList());
         return new ResponseWrapper(response);

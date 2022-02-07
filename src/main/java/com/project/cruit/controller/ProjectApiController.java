@@ -31,10 +31,10 @@ public class ProjectApiController {
 
     @GetMapping("/api/v1/projects")
     public PageWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
-                                                     @RequestParam(name="offset", defaultValue = "0") int offset,
+                                                     @RequestParam(name="page", defaultValue = "0") int page,
                                                      @RequestParam(name = "limit", defaultValue = "5") int limit) {
         Page<Project> projects;
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "id"));
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id"));
         if (stackFilter.isBlank()) {
             projects =projectService.findAll(pageRequest);
         } else {
@@ -42,7 +42,7 @@ public class ProjectApiController {
             projects = projectService.findByStackFilter(stackFilterList, pageRequest);
         }
         // page offset이 너무 크면 에러
-        if (projects.getTotalPages() <= offset) {
+        if (projects.getTotalPages() <= page) {
             throw new InvalidPageOffsetException();
         }
 
