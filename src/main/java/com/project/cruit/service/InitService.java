@@ -70,7 +70,12 @@ public class InitService {
         user3.setProfile("https://w7.pngwing.com/pngs/732/154/png-transparent-pokemon-meowth-whiskers-meowth-pokemon-go-ash-ketchum-pokemon-go-mammal-cat-like-mammal-carnivoran-thumbnail.png");
         userRepository.save(user3);
 
-
+        for(int i=0; i<50; i++) {
+            Project project = new Project(user1, "test " + i, "test");
+            projectService.saveProject(project);
+            Part backendPart = partService.getBackendPart(project);
+            backendPart.addStack(stackService.findByName("django"));
+        }
         Project project = new Project(user1, "test 프로젝트1", "test 프로젝트입니다. 테스트");
         projectService.saveProject(project);
         Part backendPart = partService.getBackendPart(project);
@@ -82,7 +87,7 @@ public class InitService {
         frontendPart.addMember(user3);
         frontendPart.addStack(stackService.findByName("react"));
 
-        Project project2 = new Project(user3, "test2", "test 2번째입니다.");
+        Project project2 = new Project(user3, "test 프로젝트2", "test 2번째입니다.");
         projectService.saveProject(project2);
         Part frontendPart1 = partService.getFrontendPart(project2);
         frontendPart1.addStack(stackService.findByName("vue.js"));

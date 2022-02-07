@@ -1,14 +1,20 @@
 package com.project.cruit.controller;
 
+import com.project.cruit.dto.PageWrapper;
+import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.entity.*;
 import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.stack.Stack;
+import com.project.cruit.error.InvalidPageOffsetException;
 import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,20 +29,28 @@ public class ProjectApiController {
     private final UserService userService;
     private final PartService partService;
 
-    @GetMapping("/api/projects")
-    public ResponseWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter) {
-        List<Project> projects;
+    @GetMapping("/api/v1/projects")
+    public PageWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
+                                                     @RequestParam(name="offset", defaultValue = "0") int offset,
+                                                     @RequestParam(name = "limit", defaultValue = "5") int limit) {
+        Page<Project> projects;
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "id"));
         if (stackFilter.isBlank()) {
-            projects =projectService.findAll();
+            projects =projectService.findAll(pageRequest);
         } else {
             List<String> stackFilterList = List.of(stackFilter.split(";"));
-            projects = projectService.findByStackFilter(stackFilterList);
+            projects = projectService.findByStackFilter(stackFilterList, pageRequest);
         }
+        // page offset이 너무 크면 에러
+        if (projects.getTotalPages() <= offset) {
+            throw new InvalidPageOffsetException();
+        }
+
         List<ReadProjectResponse> responses = projects.stream().map(ReadProjectResponse::new).collect(Collectors.toList());
-        return new ResponseWrapper(responses);
+        return new PageWrapper(responses, projects.hasPrevious(), projects.hasNext(), projects.getTotalPages(), projects.getNumber());
     }
 
-    @PostMapping("/projects")
+    @PostMapping("/api/v1/projects")
     public void createProject(@RequestBody @Valid CreateProjectRequest request) {
         User proposer = userService.findById(request.getUserId());
         Project project = new Project(proposer, request.getName(), request.getDescription());
@@ -68,9 +82,20 @@ public class ProjectApiController {
             proposerName = project.getProposer().getName();
             description = project.getDescription();
             name = project.getName();
-            frontendPart = new PartDto(partService.getFrontendPart(project));
-            backendPart = new PartDto(partService.getBackendPart(project));
-            designPart = new PartDto(partService.getDesignPart(project));
+            List<Part> parts = project.getParts();
+            for (Part part : parts) {
+                switch (part.getPosition()) {
+                    case "frontend":
+                        frontendPart = new PartDto(part);
+                        break;
+                    case "backend":
+                        backendPart = new PartDto(part);
+                        break;
+                    case "design":
+                        designPart = new PartDto(part);
+                        break;
+                }
+            }
         }
     }
 

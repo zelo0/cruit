@@ -7,6 +7,8 @@ import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.Project;
 import com.project.cruit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,8 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public List<Project> findAll() {
-        return projectRepository.findAll();
+    public Page<Project> findAll(Pageable pageable) {
+        return projectRepository.findAll(pageable);
     }
 
     @Transactional
@@ -47,7 +49,7 @@ public class ProjectService {
         project.addPart(designPart);
     }
 
-    public List<Project> findByStackFilter(List<String> stacks) {
-        return projectRepository.findByStackFilter(stacks);
+    public Page<Project> findByStackFilter(List<String> stacks, Pageable pageable) {
+        return projectRepository.findByStackFilter(stacks, pageable);
     }
 }
