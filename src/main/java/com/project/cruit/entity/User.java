@@ -53,12 +53,22 @@ public class User {
     public User() {
     }
 
-    public User(String email, String password, String name, Position position, String github, Boolean canBeLeader) {
+
+    public User(String email, String password, String name, String position) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.position = position;
-        this.github = github;
-        this.canBeLeader = canBeLeader;
+        switch (position) {
+            case "frontend":
+                this.position = Position.FRONTEND;
+                break;
+            case "backend":
+                this.position = Position.BACKEND;
+                break;
+            case "design":
+                this.position = Position.DESIGN;
+                break;
+        }
     }
+
 }

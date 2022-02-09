@@ -1,11 +1,10 @@
 package com.project.cruit.controller;
 
 import com.project.cruit.dto.PageWrapper;
-import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.entity.*;
 import com.project.cruit.entity.part.Part;
 import com.project.cruit.entity.stack.Stack;
-import com.project.cruit.error.InvalidPageOffsetException;
+import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.UserService;

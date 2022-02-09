@@ -1,4 +1,4 @@
-package com.project.cruit.error;
+package com.project.cruit.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
