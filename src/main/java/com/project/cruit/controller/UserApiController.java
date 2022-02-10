@@ -46,8 +46,12 @@ public class UserApiController {
         private String name;
 
         @NotEmpty
-        @Pattern(regexp = "(?=fronend)(?=backend)(?=design)") // 정해진 값이 맞는 지 확인
+        @Pattern(regexp = "frontend|backend|design") // 정해진 값이 맞는 지 확인
         private String position;
+
+        public User toUser() {
+            return new User(this.getEmail(), this.getPassword(), this.getName(), this.getPosition());
+        }
     }
 
     @Data
