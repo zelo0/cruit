@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter @Setter
@@ -17,8 +18,12 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(unique = true)
     private String email;
+
     private String password;
+
+    @Column(unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -71,4 +76,16 @@ public class User {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return getEmail().equals(user.getEmail()) && getName().equals(user.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEmail(), getName());
+    }
 }
