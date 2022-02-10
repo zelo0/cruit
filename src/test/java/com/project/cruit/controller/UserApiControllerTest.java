@@ -1,6 +1,7 @@
 package com.project.cruit.controller;
 
 import com.google.gson.Gson;
+import com.project.cruit.exception.EmailExistsException;
 import com.project.cruit.exception.NameExistsException;
 import com.project.cruit.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -49,5 +50,20 @@ class UserApiControllerTest {
         mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
                 .andExpect(status().is(400))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 이름입니다"));
+    }
+
+    @Test
+    public void create_existedEmail_shouldFailAndReturn400() throws  Exception {
+        UserApiController.CreateUserRequest payload = new UserApiController.CreateUserRequest();
+        payload.setEmail("already@gmail.com");
+        payload.setPassword("12345678");
+        payload.setName("na");
+        payload.setPosition("frontend");
+
+        doThrow(new EmailExistsException()).when(userService).join(payload.toUser());
+
+        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다"));
     }
 }
