@@ -1,11 +1,10 @@
-package com.project.cruit.exception;
+package com.project.cruit.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ErrorResponse {
-    private final int code;
+public class SimpleMessageBody {
     private final String message;
 }
