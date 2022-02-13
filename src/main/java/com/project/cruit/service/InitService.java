@@ -1,15 +1,12 @@
 package com.project.cruit.service;
 
-import com.project.cruit.entity.PartStatus;
-import com.project.cruit.entity.Position;
-import com.project.cruit.entity.Project;
-import com.project.cruit.entity.User;
-import com.project.cruit.entity.part.Part;
-import com.project.cruit.entity.stack.BackendStack;
-import com.project.cruit.entity.stack.FrontendStack;
-import com.project.cruit.entity.stack.Stack;
-import com.project.cruit.repository.ProjectRepository;
-import com.project.cruit.repository.StackRepository;
+import com.project.cruit.domain.PartStatus;
+import com.project.cruit.domain.Project;
+import com.project.cruit.domain.User;
+import com.project.cruit.domain.part.Part;
+import com.project.cruit.domain.stack.BackendStack;
+import com.project.cruit.domain.stack.FrontendStack;
+import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

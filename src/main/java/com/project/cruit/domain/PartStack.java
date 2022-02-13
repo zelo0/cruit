@@ -1,7 +1,7 @@
-package com.project.cruit.entity;
+package com.project.cruit.domain;
 
-import com.project.cruit.entity.part.Part;
-import com.project.cruit.entity.stack.Stack;
+import com.project.cruit.domain.part.Part;
+import com.project.cruit.domain.stack.Stack;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

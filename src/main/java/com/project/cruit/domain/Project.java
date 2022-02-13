@@ -1,6 +1,6 @@
-package com.project.cruit.entity;
+package com.project.cruit.domain;
 
-import com.project.cruit.entity.part.Part;
+import com.project.cruit.domain.part.Part;
 import lombok.Getter;
 
 import javax.persistence.*;

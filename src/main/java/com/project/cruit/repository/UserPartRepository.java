@@ -1,6 +1,6 @@
 package com.project.cruit.repository;
 
-import com.project.cruit.entity.UserPart;
+import com.project.cruit.domain.UserPart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

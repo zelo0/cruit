@@ -1,12 +1,10 @@
 package com.project.cruit.service;
 
-import com.google.gson.Gson;
-import com.project.cruit.entity.User;
+import com.project.cruit.domain.User;
 import com.project.cruit.exception.EmailExistsException;
 import com.project.cruit.exception.NameExistsException;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

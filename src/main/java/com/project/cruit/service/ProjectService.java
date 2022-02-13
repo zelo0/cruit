@@ -1,10 +1,10 @@
 package com.project.cruit.service;
 
-import com.project.cruit.entity.part.BackendPart;
-import com.project.cruit.entity.part.DesignPart;
-import com.project.cruit.entity.part.FrontendPart;
-import com.project.cruit.entity.part.Part;
-import com.project.cruit.entity.Project;
+import com.project.cruit.domain.part.BackendPart;
+import com.project.cruit.domain.part.DesignPart;
+import com.project.cruit.domain.part.FrontendPart;
+import com.project.cruit.domain.part.Part;
+import com.project.cruit.domain.Project;
 import com.project.cruit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

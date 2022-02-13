@@ -1,7 +1,7 @@
-package com.project.cruit.entity.stack;
+package com.project.cruit.domain.stack;
 
-import com.project.cruit.entity.PartStack;
-import com.project.cruit.entity.UserStack;
+import com.project.cruit.domain.PartStack;
+import com.project.cruit.domain.UserStack;
 import lombok.Getter;
 import javax.persistence.*;
 import java.util.List;

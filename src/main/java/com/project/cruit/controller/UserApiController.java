@@ -1,8 +1,7 @@
 package com.project.cruit.controller;
 
 import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.entity.Position;
-import com.project.cruit.entity.User;
+import com.project.cruit.domain.User;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;

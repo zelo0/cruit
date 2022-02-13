@@ -1,4 +1,4 @@
-package com.project.cruit.entity;
+package com.project.cruit.domain;
 
 import javax.persistence.*;
 

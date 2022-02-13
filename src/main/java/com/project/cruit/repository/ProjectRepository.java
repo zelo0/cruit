@@ -1,6 +1,6 @@
 package com.project.cruit.repository;
 
-import com.project.cruit.entity.Project;
+import com.project.cruit.domain.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

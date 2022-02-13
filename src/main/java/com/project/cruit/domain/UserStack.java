@@ -1,6 +1,6 @@
-package com.project.cruit.entity;
+package com.project.cruit.domain;
 
-import com.project.cruit.entity.stack.Stack;
+import com.project.cruit.domain.stack.Stack;
 
 import javax.persistence.*;
 

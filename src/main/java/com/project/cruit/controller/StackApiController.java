@@ -1,7 +1,7 @@
 package com.project.cruit.controller;
 
 import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.entity.stack.Stack;
+import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.repository.StackRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;

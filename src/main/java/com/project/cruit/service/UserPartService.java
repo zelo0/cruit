@@ -1,8 +1,8 @@
 package com.project.cruit.service;
 
-import com.project.cruit.entity.User;
-import com.project.cruit.entity.UserPart;
-import com.project.cruit.entity.part.Part;
+import com.project.cruit.domain.User;
+import com.project.cruit.domain.UserPart;
+import com.project.cruit.domain.part.Part;
 import com.project.cruit.repository.UserPartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
