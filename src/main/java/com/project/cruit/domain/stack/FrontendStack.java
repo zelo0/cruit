@@ -1,6 +1,4 @@
-package com.project.cruit.entity.stack;
-
-import lombok.NoArgsConstructor;
+package com.project.cruit.domain.stack;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

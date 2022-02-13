@@ -1,6 +1,6 @@
-package com.project.cruit.entity.part;
+package com.project.cruit.domain.part;
 
-import com.project.cruit.entity.Project;
+import com.project.cruit.domain.Project;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;

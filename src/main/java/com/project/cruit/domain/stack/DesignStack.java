@@ -1,4 +1,4 @@
-package com.project.cruit.entity.stack;
+package com.project.cruit.domain.stack;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
