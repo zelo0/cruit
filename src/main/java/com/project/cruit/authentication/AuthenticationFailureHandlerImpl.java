@@ -22,6 +22,8 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setCharacterEncoding("utf-8");
+        response.setContentType("text/json");
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
 
         SimpleMessageBody body;
         if (exception instanceof InsufficientAuthenticationException) {
