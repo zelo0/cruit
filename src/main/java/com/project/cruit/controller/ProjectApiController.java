@@ -41,7 +41,7 @@ public class ProjectApiController {
             projects = projectService.findByStackFilter(stackFilterList, pageRequest);
         }
         // page offset이 너무 크면 에러
-        if (projects.getTotalPages() <= page) {
+        if (projects.getTotalPages() != 0 && projects.getTotalPages() <= page) {
             throw new InvalidPageOffsetException();
         }
 
