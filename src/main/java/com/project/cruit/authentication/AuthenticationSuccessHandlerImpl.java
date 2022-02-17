@@ -21,7 +21,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/json");
-        response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
 
 
         SimpleMessageBody body = new SimpleMessageBody("로그인에 성공했습니다");

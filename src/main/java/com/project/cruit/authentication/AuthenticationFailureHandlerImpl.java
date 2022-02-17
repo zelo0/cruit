@@ -23,7 +23,6 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/json");
-        response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
 
         SimpleMessageBody body;
         if (exception instanceof InsufficientAuthenticationException) {
