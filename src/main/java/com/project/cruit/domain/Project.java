@@ -1,5 +1,6 @@
 package com.project.cruit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.part.Part;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ public class Project {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proposer_id")
+    @JsonIgnore
     private User proposer;
 
 

@@ -1,5 +1,7 @@
 package com.project.cruit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,5 +14,6 @@ public class Output {
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "output")
+    @JsonIgnore
     private Project project;
 }

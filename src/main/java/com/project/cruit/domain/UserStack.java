@@ -1,5 +1,6 @@
 package com.project.cruit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.stack.Stack;
 
 import javax.persistence.*;
@@ -13,9 +14,11 @@ public class UserStack {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stack_id")
+    @JsonIgnore
     private Stack stack;
 }

@@ -1,5 +1,6 @@
 package com.project.cruit.domain.stack;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.PartStack;
 import com.project.cruit.domain.UserStack;
 import lombok.Getter;
@@ -23,9 +24,11 @@ public abstract class Stack {
     private String dtype;
 
     @OneToMany(mappedBy = "stack")
+    @JsonIgnore
     private List<UserStack> userStacks;
 
     @OneToMany(mappedBy = "stack")
+    @JsonIgnore
     private List<PartStack> partStacks;
 
     public Stack(String name, String image) {
