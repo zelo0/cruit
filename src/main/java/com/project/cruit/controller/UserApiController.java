@@ -3,7 +3,10 @@ package com.project.cruit.controller;
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.*;
+import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.ResponseWrapper;
+import com.project.cruit.exception.NotHaveSessionException;
+import com.project.cruit.service.StackService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,15 +26,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserApiController {
     private final UserService userService;
+    private final StackService stackService;
+
 
     @GetMapping("/api/v1/users/me")
     public ResponseWrapper getMe(@CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
         User me = userService.findById(sessionUser.getId());
-        return new ResponseWrapper(new GetMeResponse(me));
+        return new ResponseWrapper(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition())));
     }
 
     @GetMapping("/api/v1/users/me/nickname")
     public ResponseWrapper getMyNickname(@CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
         return new ResponseWrapper(new GetMyNicknameResponse(sessionUser.getNickname()));
     }
 
@@ -79,24 +92,26 @@ public class UserApiController {
         private String name;
         private Position position;
         private List<UserStack> userStacks;
+        private List<? extends Stack> selectableStacks;
         private String introduction;
         private String profile;
         private String github;
         private List<String> links;
-        private Double rating;
+//        private Double rating;
         private Boolean canBeLeader;
 
-        public GetMeResponse(User me) {
+        public GetMeResponse(User me, List<? extends Stack> selectableStacks) {
             id = me.getId();
             email = me.getEmail();
             name = me.getName();
             position = me.getPosition();
             userStacks = me.getUserStacks();
+            this.selectableStacks = selectableStacks;
             introduction = me.getIntroduction();
             profile = me.getProfile();
             github = me.getGithub();
             links = me.getLinks();
-            rating = me.getRating();
+//            rating = me.getRating();
             canBeLeader = me.getCanBeLeader();
         }
     }
