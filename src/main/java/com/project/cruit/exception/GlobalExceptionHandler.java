@@ -1,6 +1,7 @@
 package com.project.cruit.exception;
 
 import com.project.cruit.dto.SimpleMessageBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RegisterException.class)
     public ResponseEntity<SimpleMessageBody> handleRegisterException(Exception e) {
         return ResponseEntity.badRequest().body(new SimpleMessageBody(e.getMessage()));
+    }
+
+    @ExceptionHandler(NotHaveSessionException.class)
+    public ResponseEntity<SimpleMessageBody> handleSessionException(Exception e) {
+        return new ResponseEntity(new SimpleMessageBody(e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
