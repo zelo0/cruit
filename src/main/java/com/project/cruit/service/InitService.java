@@ -3,6 +3,7 @@ package com.project.cruit.service;
 import com.project.cruit.domain.PartStatus;
 import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
+import com.project.cruit.domain.UserStack;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.BackendStack;
 import com.project.cruit.domain.stack.FrontendStack;
@@ -58,10 +59,17 @@ public class InitService {
 
 
     public void sampleProject() {
+
         User user1 = new User("a@gmail.com", "12345678", "(테스트) 주니어 백엔드", "backend");
         userService.join(user1);
         user1.setProfile("https://w7.pngwing.com/pngs/193/722/png-transparent-red-and-blue-spider-man-illustration-spider-man-miles-morales-marvel-comics-spider-man-heroes-superhero-fictional-character-thumbnail.png");
         userRepository.save(user1);
+
+        UserStack spring = new UserStack(user1, stackService.findByName("spring"));
+        UserStack django = new UserStack(user1, stackService.findByName("django"));
+        user1.getUserStacks().add(spring);
+        user1.getUserStacks().add(django);
+
         User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", "backend");
         userService.join(user2);
         user2.setProfile("https://w7.pngwing.com/pngs/549/240/png-transparent-marvel-iron-man-iron-man-hulk-spider-man-ultron-ironman-avengers-heroes-superhero-thumbnail.png");
