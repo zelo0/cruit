@@ -27,8 +27,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Position position;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserStack> userStacks;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserStack> userStacks = new ArrayList<>();
 
     private String introduction;
     private String profile;
