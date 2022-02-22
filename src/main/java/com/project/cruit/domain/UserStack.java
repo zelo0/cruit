@@ -2,10 +2,12 @@ package com.project.cruit.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.stack.Stack;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class UserStack {
     @Id
     @GeneratedValue
@@ -19,6 +21,14 @@ public class UserStack {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stack_id")
-    @JsonIgnore
     private Stack stack;
+
+
+    public UserStack() {
+    }
+
+    public UserStack(User user, Stack stack) {
+        this.user = user;
+        this.stack = stack;
+    }
 }
