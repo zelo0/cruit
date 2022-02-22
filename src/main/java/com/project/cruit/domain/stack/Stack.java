@@ -3,6 +3,7 @@ package com.project.cruit.domain.stack;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.PartStack;
 import com.project.cruit.domain.UserStack;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 @Getter
-public abstract class Stack {
+@AllArgsConstructor
+public class Stack {
 
     @Id
     @GeneratedValue
