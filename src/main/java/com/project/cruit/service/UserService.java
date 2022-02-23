@@ -58,6 +58,11 @@ public class UserService {
     public Position setPosition(Long userId, String position) {
         User user = userRepository.findById(userId).get();
 
+        // 다른 포지션으로 바꾸는 경우 사용할 수 있는 스택(userStack) 리스트 비우기
+        if (!user.getPosition().name().equals(position)) {
+            user.getUserStacks().clear();
+        }
+        
         switch (position) {
             case "FRONTEND":
                 user.setPosition(Position.FRONTEND);
@@ -69,7 +74,9 @@ public class UserService {
                 user.setPosition(Position.DESIGN);
                 break;
         }
-        System.out.println("user = " + user.getPosition().toString());
+        
+        
+        System.out.println("user = " + user.getPosition().name());
         return user.getPosition();
     }
 
@@ -82,12 +89,26 @@ public class UserService {
     }
 
     @Transactional
-    public List<Stack> setMyUserStacks(Long userId, List<Stack> stacks) {
+    public List<Stack> setUserStacks(Long userId, List<Stack> stacks) {
         User user = userRepository.findById(userId).get();
         user.getUserStacks().clear();
         for (Stack stack : stacks) {
             user.getUserStacks().add(new UserStack(user, stack));
         }
         return user.getUserStacks().stream().map(userStack -> userStack.getStack() ).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public String setGithub(Long userId, String github) {
+        User user = userRepository.findById(userId).get();
+        user.setGithub(github);
+        return user.getGithub();
+    }
+
+    @Transactional
+    public String setIntroduction(Long userId, String introduction) {
+        User user = userRepository.findById(userId).get();
+        user.setIntroduction(introduction);
+        return user.getIntroduction();
     }
 }
