@@ -21,15 +21,17 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/users")
 public class UserApiController {
     private final UserService userService;
     private final StackService stackService;
 
 
-    @GetMapping("/api/v1/users/me")
+    @GetMapping("/me")
     public ResponseWrapper getMe(@CurrentUser SessionUser sessionUser) {
         if (sessionUser == null) {
             throw new NotHaveSessionException();
@@ -39,19 +41,76 @@ public class UserApiController {
         return new ResponseWrapper(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition())));
     }
 
-    @GetMapping("/api/v1/users/me/nickname")
-    public ResponseWrapper getMyNickname(@CurrentUser SessionUser sessionUser) {
+    @GetMapping("/me/name")
+    public ResponseWrapper getMyName(@CurrentUser SessionUser sessionUser) {
         if (sessionUser == null) {
             throw new NotHaveSessionException();
         }
 
+        // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제
+        
         return new ResponseWrapper(new GetMyNicknameResponse(sessionUser.getNickname()));
     }
 
-    @PostMapping("/api/v1/users")
+    @PostMapping("/")
     public ResponseWrapper createUser(@RequestBody @Valid CreateUserRequest request) {
         User user = new User(request.getEmail(), request.getPassword(), request.getName(), request.getPosition());
         return new ResponseWrapper(new CreateUserResponse(userService.join(user)));
+    }
+
+    @PatchMapping("/me/name")
+    public ResponseWrapper setMyName(@RequestBody @Valid SetMyNameRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        String changedName = userService.setName(sessionUser.getId(), request.getName());
+        return new ResponseWrapper(new SetMyNameResponse(changedName));
+    }
+
+    @PatchMapping("/me/position")
+    public ResponseWrapper setMyPosition(@RequestBody @Valid SetMyPositionRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        Position changedPosition = userService.setPosition(sessionUser.getId(), request.getPosition());
+        List<? extends Stack> selectableStacks = stackService.findAllByPosition(changedPosition);
+        return new ResponseWrapper(new SetMyPositionResponse(changedPosition.name(), (List<Stack>) selectableStacks));
+    }
+
+    @PatchMapping("/me/canBeLeader")
+    public ResponseWrapper setMyCanBeLeader(@RequestBody @Valid SetMyCanBeLeaderRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        Boolean changedCanBeLeader = userService.setCanBeLeader(sessionUser.getId(), request.getCanBeLeader());
+        return new ResponseWrapper(new SetMyCanBeLeaderResponse(changedCanBeLeader));
+    }
+
+    @PatchMapping("/me/stacks")
+    public ResponseWrapper setMyStacks(@RequestBody @Valid SetMyStacksRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        List<Stack> changedStacks = userService.setUserStacks(sessionUser.getId(), request.getStacks());
+        return new ResponseWrapper(new SetMyStacksResponse(changedStacks));
+    }
+
+    @PatchMapping("/me/introduction")
+    public ResponseWrapper setMyIntroduction(@RequestBody @Valid SetMyIntroductionRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        String changedIntroduction = userService.setIntroduction(sessionUser.getId(), request.getIntroduction());
+        return new ResponseWrapper(new SetMyIntroductionResponse(changedIntroduction));
+    }
+
+    @PatchMapping("/me/github")
+    public ResponseWrapper setMyGithub(@RequestBody @Valid SetMyGithubRequest request, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+        String changedGithub = userService.setGithub(sessionUser.getId(), request.getGithub());
+        return new ResponseWrapper(new SetMyGithubResponse(changedGithub));
     }
 
     @Data
@@ -82,6 +141,7 @@ public class UserApiController {
     @Data
     @AllArgsConstructor
     static class CreateUserResponse {
+        @NotEmpty
         private Long userId;
     }
 
@@ -91,7 +151,7 @@ public class UserApiController {
         private String email;
         private String name;
         private Position position;
-        private List<UserStack> userStacks;
+        private List<Stack> availableStacks;
         private List<? extends Stack> selectableStacks;
         private String introduction;
         private String profile;
@@ -105,7 +165,7 @@ public class UserApiController {
             email = me.getEmail();
             name = me.getName();
             position = me.getPosition();
-            userStacks = me.getUserStacks();
+            availableStacks = me.getUserStacks().stream().map(userStack -> userStack.getStack()).collect(Collectors.toList());
             this.selectableStacks = selectableStacks;
             introduction = me.getIntroduction();
             profile = me.getProfile();
@@ -117,11 +177,90 @@ public class UserApiController {
     }
 
     @Data
+    @AllArgsConstructor
     static class GetMyNicknameResponse {
-        private String nickname;
+        private String name;
+    }
 
-        public GetMyNicknameResponse(String nickname) {
-            this.nickname = nickname;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetMyNameRequest {
+        @NotEmpty
+        private String name;
+    }
+
+    @Data
+    static class SetMyNameResponse {
+        private String name;
+        public SetMyNameResponse(String changedName) {
+            this.name = changedName;
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetMyPositionRequest {
+        private String position;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyPositionResponse {
+        private String position;
+        private List<Stack> selectableStacks;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetMyCanBeLeaderRequest {
+        private Boolean canBeLeader;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyCanBeLeaderResponse {
+        private Boolean canBeLeader;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class SetMyStacksRequest {
+        private List<Stack> stacks;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyStacksResponse {
+        private List<Stack> availableStacks;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetMyIntroductionRequest {
+        private String introduction;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyIntroductionResponse {
+        private String introduction;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class SetMyGithubRequest {
+        private String github;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyGithubResponse {
+        private String github;
     }
 }
