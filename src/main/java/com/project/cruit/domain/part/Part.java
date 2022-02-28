@@ -1,5 +1,6 @@
 package com.project.cruit.domain.part;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public abstract class Part {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
+    @JsonIgnore
     private Project project;
 
     @Enumerated(EnumType.STRING)
