@@ -52,7 +52,7 @@ public class UserApiController {
         return new ResponseWrapper(new GetMyNicknameResponse(sessionUser.getNickname()));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseWrapper createUser(@RequestBody @Valid CreateUserRequest request) {
         User user = new User(request.getEmail(), request.getPassword(), request.getName(), request.getPosition());
         return new ResponseWrapper(new CreateUserResponse(userService.join(user)));
