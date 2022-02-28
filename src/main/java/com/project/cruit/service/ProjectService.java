@@ -25,8 +25,8 @@ public class ProjectService {
     }
 
     @Transactional
-    public void saveProject(Project project) {
-        projectRepository.save(project);
+    public Long saveProject(Project project) {
+        Project savedProject = projectRepository.save(project);
 
         Part frontendPart = new FrontendPart(project);
         Part backendPart = new BackendPart(project);
@@ -47,9 +47,15 @@ public class ProjectService {
         project.addPart(frontendPart);
         project.addPart(backendPart);
         project.addPart(designPart);
+
+        return savedProject.getId();
     }
 
     public Page<Project> findByStackFilter(List<String> stacks, Pageable pageable) {
         return projectRepository.findByStackFilter(stacks, pageable);
+    }
+
+    public Project findById(Long projectId) {
+        return projectRepository.findById(projectId).get();
     }
 }
