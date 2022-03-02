@@ -23,6 +23,8 @@ public class Project {
 
 
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
