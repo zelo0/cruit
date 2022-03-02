@@ -43,8 +43,9 @@ public class UserApiController {
 
     @GetMapping("/me/name")
     public ResponseWrapper getMyName(@CurrentUser SessionUser sessionUser) {
+        // session이 없으면 빈 문자열 반환
         if (sessionUser == null) {
-            throw new NotHaveSessionException();
+            return new ResponseWrapper(new GetMyNicknameResponse(""));
         }
 
         // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제
