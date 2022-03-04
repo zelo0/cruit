@@ -8,6 +8,9 @@ import com.project.cruit.exception.EmailExistsException;
 import com.project.cruit.exception.NameExistsException;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,5 +113,13 @@ public class UserService {
         User user = userRepository.findById(userId).get();
         user.setIntroduction(introduction);
         return user.getIntroduction();
+    }
+
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> findByStackFilter(List<String> stackFilterList, Pageable pageable) {
+        return userRepository.findByStackFilter(stackFilterList, pageable);
     }
 }
