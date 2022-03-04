@@ -4,7 +4,9 @@ import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
+import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.service.StackService;
 import com.project.cruit.service.UserService;
@@ -12,6 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.*;
@@ -20,6 +25,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +36,26 @@ public class UserApiController {
     private final UserService userService;
     private final StackService stackService;
 
+    @GetMapping("")
+    public PageWrapper<SearchUserResponse> searchUsers(@RequestParam(name = "q", defaultValue = "") String stackFilter,
+                                                                          @RequestParam(name="page", defaultValue = "0") int page,
+                                                                          @RequestParam(name = "limit", defaultValue = "12") int limit) {
+        Page<User> users;
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id"));
+        if (stackFilter.isBlank()) {
+            users =userService.findAll(pageRequest);
+        } else {
+            List<String> stackFilterList = List.of(stackFilter.split(";"));
+            users = userService.findByStackFilter(stackFilterList, pageRequest);
+        }
+        // page offset이 너무 크면 에러
+        if (users.getTotalPages() != 0 && users.getTotalPages() <= page) {
+            throw new InvalidPageOffsetException();
+        }
+
+        List<SearchUserResponse> responses = users.stream().map(SearchUserResponse::new).collect(Collectors.toList());
+        return new PageWrapper(responses, users.hasPrevious(), users.hasNext(), users.getTotalPages(), users.getNumber());
+    }
 
     @GetMapping("/me")
     public ResponseWrapper getMe(@CurrentUser SessionUser sessionUser) {
@@ -263,5 +289,39 @@ public class UserApiController {
     @AllArgsConstructor
     static class SetMyGithubResponse {
         private String github;
+    }
+
+    @Data
+    static class SearchUserResponse {
+        private Long id;
+        private String name;
+        private String profile;
+        private String github;
+        private String position;
+        private List<String> stacks = new ArrayList<>();
+        private Boolean canBeLeader;
+
+        public SearchUserResponse(User user) {
+            this.id = user.getId();
+            this.name = user.getName();
+            this.profile = user.getProfile();
+            this.github = user.getGithub();
+            this.position = user.getPosition().name();
+            this.canBeLeader = user.getCanBeLeader();
+
+            List<UserStack> userStacks = user.getUserStacks();
+            for (UserStack userStack : userStacks) {
+                stacks.add(userStack.getStack().getImage());
+            }
+        }
+    }
+
+    @Data
+    static class StackImage {
+        private String image;
+
+        public StackImage(Stack stack) {
+            image = stack.getImage();
+        }
     }
 }
