@@ -37,7 +37,7 @@ public class ProjectApiController {
     @GetMapping("")
     public PageWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
                                                      @RequestParam(name="page", defaultValue = "0") int page,
-                                                     @RequestParam(name = "limit", defaultValue = "5") int limit) {
+                                                     @RequestParam(name = "limit", defaultValue = "12") int limit) {
         Page<Project> projects;
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id"));
         if (stackFilter.isBlank()) {
@@ -143,12 +143,16 @@ public class ProjectApiController {
 
     @Data
     static class DetailPartDto {
-        private Part part;
+        private Long id;
+        private String status;
+        private String position;
         private List<Stack> stacks = new ArrayList<>();
         private List<SimpleUserInfo> partMembers = new ArrayList<>();
 
         public DetailPartDto(Part part) {
-            this.part = part;
+            this.id = part.getId();
+            this.status = part.getStatus().name();
+            this.position = part.getPosition();
             List<PartStack> partStacks = part.getPartStacks();
             for (PartStack partStack : partStacks) {
                 this.stacks.add(partStack.getStack());
@@ -156,7 +160,7 @@ public class ProjectApiController {
 
             List<UserPart> userParts = part.getUserParts();
             for (UserPart userPart : userParts) {
-                this.partMembers.add(new SimpleUserInfo(userPart.getUser()));
+                this.partMembers.add(new SimpleUserInfo(userPart.getUser(), userPart.getIsLeader()));
             }
         }
     }
@@ -202,7 +206,7 @@ public class ProjectApiController {
 
         public GetProjectResponse(Project project) {
             id = project.getId();
-            proposer = new SimpleUserInfo(project.getProposer());
+            proposer = new SimpleUserInfo(project.getProposer(), false);
             name = project.getName();
             description = project.getDescription();
             questions = project.getQuestions();
@@ -215,11 +219,13 @@ public class ProjectApiController {
         private Long id;
         private String name;
         private String profile;
+        private Boolean isLeader;
 
-        public SimpleUserInfo(User user) {
+        public SimpleUserInfo(User user, Boolean isLeader) {
             id = user.getId();
             name = user.getName();
             profile = user.getProfile();
+            this.isLeader = isLeader;
         }
     }
 }
