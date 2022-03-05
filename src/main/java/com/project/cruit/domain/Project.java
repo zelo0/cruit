@@ -3,6 +3,7 @@ package com.project.cruit.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.part.Part;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 public class Project {
     @Id
     @GeneratedValue
