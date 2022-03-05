@@ -115,11 +115,21 @@ public class UserService {
         return user.getIntroduction();
     }
 
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<User> findByNoStackFilter(Pageable pageable, String leaderFilter) {
+        if (leaderFilter.equals("all")) {
+            return userRepository.findAll(pageable);
+        }
+        else {
+            return userRepository.findByCanBeLeader(Boolean.parseBoolean(leaderFilter), pageable);
+        }
     }
 
-    public Page<User> findByStackFilter(List<String> stackFilterList, Pageable pageable) {
-        return userRepository.findByStackFilter(stackFilterList, pageable);
+    public Page<User> findByStackFilter(List<String> stackFilterList, String leaderFilter, Pageable pageable) {
+        if (leaderFilter.equals("all")) {
+            return userRepository.findByStackFilter(stackFilterList, pageable);
+        }
+        else {
+            return userRepository.findByStackFilterAndCanBeLeader(stackFilterList, Boolean.parseBoolean(leaderFilter), pageable);
+        }
     }
 }
