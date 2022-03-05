@@ -58,4 +58,13 @@ public class ProjectService {
     public Project findById(Long projectId) {
         return projectRepository.findById(projectId).get();
     }
+
+    @Transactional
+    public Long modifyText(Long projectId, String name, String description) {
+        Project project = projectRepository.findById(projectId).get();
+        project.setName(name);
+        project.setDescription(description);
+
+        return project.getId();
+    }
 }
