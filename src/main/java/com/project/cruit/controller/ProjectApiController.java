@@ -9,6 +9,7 @@ import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
+import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.UserService;
@@ -35,7 +36,7 @@ public class ProjectApiController {
     private final UserService userService;
 
     @GetMapping("")
-    public PageWrapper<ReadProjectResponse> projects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
+    public PageWrapper<ReadProjectResponse> getProjects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
                                                      @RequestParam(name="page", defaultValue = "0") int page,
                                                      @RequestParam(name = "limit", defaultValue = "12") int limit) {
         Page<Project> projects;
@@ -53,6 +54,41 @@ public class ProjectApiController {
 
         List<ReadProjectResponse> responses = projects.stream().map(ReadProjectResponse::new).collect(Collectors.toList());
         return new PageWrapper(responses, projects.hasPrevious(), projects.hasNext(), projects.getTotalPages(), projects.getNumber());
+    }
+
+    /* 프로젝트 제안자가 프로젝트 기본 정보 수정하려 할 때 접근 */
+    @GetMapping("/simple/{projectId}")
+    public ResponseWrapper getProjectSimple(@CurrentUser SessionUser sessionUser, @PathVariable Long projectId) {
+
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
+        // 프로젝트 제안자가 아닌데 접근하려 하면 exception
+        Project targetProject = projectService.findById(projectId);
+        if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
+            throw new NotPermitException();
+        }
+
+        return new ResponseWrapper(new GetProjectSimpleResponse(targetProject));
+    }
+
+    @PatchMapping("/text")
+    public ResponseWrapper setProjectText(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectTextRequest request) {
+
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
+        // 프로젝트 제안자가 아닌데 수정하려 하면 exception
+        Project targetProject = projectService.findById(request.getId());
+
+        if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
+            throw new NotPermitException();
+        }
+
+        Long afterChangeProjectId = projectService.modifyText(request.getId(), request.getName(), request.getDescription());
+        return new ResponseWrapper(new SetProjectTextResponse(afterChangeProjectId));
     }
 
     @PostMapping("")
@@ -227,5 +263,32 @@ public class ProjectApiController {
             profile = user.getProfile();
             this.isLeader = isLeader;
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class GetProjectSimpleResponse {
+        private String name;
+        private String description;
+
+        public GetProjectSimpleResponse(Project project) {
+            this.name = project.getName();
+            this.description = project.getDescription();
+        }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetProjectTextRequest {
+        private Long id;
+        private String name;
+        private String description;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetProjectTextResponse {
+        private Long projectId;
     }
 }
