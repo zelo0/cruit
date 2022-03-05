@@ -58,6 +58,12 @@ public class UserApiController {
         return new PageWrapper(responses, users.hasPrevious(), users.hasNext(), users.getTotalPages(), users.getNumber());
     }
 
+    @GetMapping("/{userId}")
+    public ResponseWrapper getUser(@PathVariable Long userId) {
+        User targetUser = userService.findById(userId);
+        return new ResponseWrapper(new GetUserResponse(targetUser));
+    }
+
     @GetMapping("/me")
     public ResponseWrapper<GetMeResponse> getMe(@CurrentUser SessionUser sessionUser) {
         if (sessionUser == null) {
@@ -324,6 +330,52 @@ public class UserApiController {
 
         public StackImage(Stack stack) {
             image = stack.getImage();
+        }
+    }
+
+    @Data
+    static class GetUserResponse {
+        private Long id;
+        private String name;
+        private String profile;
+        private String github;
+        private Boolean canBeLeader;
+        private String position;
+        private String introduction;
+        private List<String> linkList;
+        private List<Stack> stackList = new ArrayList<>();
+        private List<SimpleProjectInfo> projectList = new ArrayList<>();
+
+        public GetUserResponse(User user) {
+            id = user.getId();
+            name = user.getName();
+            profile = user.getProfile();
+            github = user.getGithub();
+            canBeLeader = user.getCanBeLeader();
+            position = user.getPosition().name();
+            introduction = user.getIntroduction();
+            linkList = user.getLinks();
+
+            List<UserStack> userStacks = user.getUserStacks();
+            for (UserStack userStack : userStacks) {
+                stackList.add(userStack.getStack());
+            }
+
+            List<UserPart> userParts = user.getUserParts();
+            for (UserPart userPart : userParts) {
+                projectList.add(new SimpleProjectInfo(userPart.getPart().getProject()));
+            }
+        }
+    }
+
+    @Data
+    static class SimpleProjectInfo {
+        private Long id;
+        private String name;
+
+        public SimpleProjectInfo(Project project) {
+            this.id = project.getId();
+            this.name = project.getName();
         }
     }
 }
