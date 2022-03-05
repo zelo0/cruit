@@ -21,4 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u join u.userStacks us join us.stack s where s.name in :stackFilterList")
     Page<User> findByStackFilter(@Param("stackFilterList") List<String> stackFilterList, Pageable pageable);
 
+    Page<User> findByCanBeLeader(boolean leaderFilter, Pageable pageable);
+
+    @Query("select u from User u join u.userStacks us join us.stack s where s.name in :stackFilterList and u.canBeLeader = :leaderFilter")
+    Page<User> findByStackFilterAndCanBeLeader(@Param("stackFilterList") List<String> stackFilterList, @Param("leaderFilter") boolean leaderFilter, Pageable pageable);
 }
