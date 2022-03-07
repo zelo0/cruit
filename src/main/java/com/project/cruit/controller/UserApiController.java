@@ -3,11 +3,13 @@ package com.project.cruit.controller;
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.*;
+import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
+import com.project.cruit.service.NotificationService;
 import com.project.cruit.service.StackService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class UserApiController {
     private final UserService userService;
     private final StackService stackService;
+    private final NotificationService notificationService;
 
     @GetMapping("")
     public PageWrapper<SearchUserResponse> searchUsers(@RequestParam(name = "q", defaultValue = "") String stackFilter,
@@ -74,17 +77,20 @@ public class UserApiController {
         return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition())));
     }
 
-    @GetMapping("/me/name")
-    public ResponseWrapper<GetMyNicknameResponse> getMyName(@CurrentUser SessionUser sessionUser) {
+    @GetMapping("/me/head")
+    public ResponseWrapper<GetMyHeadResponse> getMyHead(@CurrentUser SessionUser sessionUser) {
         // session이 없으면 빈 문자열 반환
         if (sessionUser == null) {
-            return new ResponseWrapper<>(new GetMyNicknameResponse(""));
+            return new ResponseWrapper<>(new GetMyHeadResponse("", 0, new ArrayList<>()));
         }
 
-        // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제
-        
-        return new ResponseWrapper<>(new GetMyNicknameResponse(sessionUser.getNickname()));
+        // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제 -  쿼리 필요
+        User user = userService.findById(sessionUser.getId());
+        long unReadCount = notificationService.getUnReadNotificationCount(user);
+        List<Notification> unReadNotifications = notificationService.getUnReadNotifications(user);
+        return new ResponseWrapper<>(new GetMyHeadResponse(user.getName(), unReadCount, unReadNotifications));
     }
+
 
     @PostMapping("")
     public ResponseWrapper<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest request) {
@@ -165,7 +171,7 @@ public class UserApiController {
         private String name;
 
         @NotEmpty
-        @Pattern(regexp = "frontend|backend|design") // 정해진 값이 맞는 지 확인
+        @Pattern(regexp = "FRONTEND|BACKEND|DESIGN") // 정해진 값이 맞는 지 확인
         private String position;
 
         public User toUser() {
@@ -213,8 +219,10 @@ public class UserApiController {
 
     @Data
     @AllArgsConstructor
-    static class GetMyNicknameResponse {
+    static class GetMyHeadResponse {
         private String name;
+        private long notificationCount;
+        private List<Notification> notifications;
     }
 
     @Data
