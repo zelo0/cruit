@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component // 초기화 안 하기 위해 주석 처리
 @RequiredArgsConstructor
 @Transactional
 public class InitService {
@@ -60,7 +60,7 @@ public class InitService {
 
     public void sampleProject() {
 
-        User user1 = new User("a@gmail.com", "12345678", "(테스트) 주니어 백엔드", "backend");
+        User user1 = new User("a@gmail.com", "12345678", "(테스트) 주니어 백엔드", "BACKEND");
         userService.join(user1);
         user1.setProfile("https://w7.pngwing.com/pngs/193/722/png-transparent-red-and-blue-spider-man-illustration-spider-man-miles-morales-marvel-comics-spider-man-heroes-superhero-fictional-character-thumbnail.png");
         userRepository.save(user1);
@@ -70,11 +70,11 @@ public class InitService {
         user1.getUserStacks().add(spring);
         user1.getUserStacks().add(django);
 
-        User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", "backend");
+        User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", "BACKEND");
         userService.join(user2);
         user2.setProfile("https://w7.pngwing.com/pngs/549/240/png-transparent-marvel-iron-man-iron-man-hulk-spider-man-ultron-ironman-avengers-heroes-superhero-thumbnail.png");
         userRepository.save(user2);
-        User user3 = new User("test3@gmail.com", "1234", "(테스트) 리액트 개발자", "frontend");
+        User user3 = new User("test3@gmail.com", "1234", "(테스트) 리액트 개발자", "FRONTEND");
         userService.join(user3);
         user3.setProfile("https://w7.pngwing.com/pngs/732/154/png-transparent-pokemon-meowth-whiskers-meowth-pokemon-go-ash-ketchum-pokemon-go-mammal-cat-like-mammal-carnivoran-thumbnail.png");
         userRepository.save(user3);
