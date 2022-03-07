@@ -27,12 +27,16 @@ public class PartService {
     }
 
     public Part getBackendPart(Project project) {
-        return partRepository.findByProjectAndPosition(project, "backend");
+        return partRepository.findByProjectAndPosition(project, "BACKEND");
     }
     public Part getFrontendPart(Project project) {
-        return partRepository.findByProjectAndPosition(project, "frontend");
+        return partRepository.findByProjectAndPosition(project, "FRONTEND");
     }
     public Part getDesignPart(Project project) {
-        return partRepository.findByProjectAndPosition(project, "design");
+        return partRepository.findByProjectAndPosition(project, "DESIGN");
+    }
+
+    public Part findById(Long id) {
+        return partRepository.findById(id).get();
     }
 }
