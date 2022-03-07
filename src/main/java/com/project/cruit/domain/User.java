@@ -1,5 +1,6 @@
 package com.project.cruit.domain;
 
+import com.project.cruit.domain.notification.Notification;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,6 +53,17 @@ public class User {
 
     private Boolean canBeLeader;
 
+    @OneToMany(mappedBy = "proposer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Project> proposedProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Proposal> sentProposals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    private List<Proposal> receivedProposals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subject")
+    private List<Notification> notifications = new ArrayList<>();
 
     public User() {
     }
@@ -62,13 +74,13 @@ public class User {
         this.password = password;
         this.name = name;
         switch (position) {
-            case "frontend":
+            case "FRONTEND":
                 this.position = Position.FRONTEND;
                 break;
-            case "backend":
+            case "BACKEND":
                 this.position = Position.BACKEND;
                 break;
-            case "design":
+            case "DESIGN":
                 this.position = Position.DESIGN;
                 break;
         }
