@@ -26,7 +26,8 @@ public class UserPart {
     @JsonIgnore
     private Part part;
 
-    private Boolean isLeader;
+    // 설정 안 했을 시 기본 값 false
+    private Boolean isLeader = false;
 
     public UserPart(User user, Part part) {
         this.user = user;
