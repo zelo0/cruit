@@ -141,13 +141,13 @@ public class ProjectApiController {
             List<Part> parts = project.getParts();
             for (Part part : parts) {
                 switch (part.getPosition()) {
-                    case "frontend":
+                    case "FRONTEND":
                         frontendPart = new SimplePartDto(part);
                         break;
-                    case "backend":
+                    case "BACKEND":
                         backendPart = new SimplePartDto(part);
                         break;
-                    case "design":
+                    case "DESIGN":
                         designPart = new SimplePartDto(part);
                         break;
                 }

@@ -7,7 +7,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("backend")
+@DiscriminatorValue("BACKEND")
 @NoArgsConstructor
 public class BackendPart extends Part{
     public BackendPart(Project project) {

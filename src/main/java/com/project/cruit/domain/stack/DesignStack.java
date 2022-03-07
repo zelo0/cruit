@@ -4,6 +4,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("design")
+@DiscriminatorValue("DESIGN")
 public class DesignStack extends Stack{
 }

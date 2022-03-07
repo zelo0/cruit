@@ -4,7 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("backend")
+@DiscriminatorValue("BACKEND")
 public class BackendStack extends Stack{
     public BackendStack(String name, String image) {
         super(name, image);
