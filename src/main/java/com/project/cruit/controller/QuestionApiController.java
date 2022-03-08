@@ -80,7 +80,7 @@ public class QuestionApiController {
 
     // 질문 삭제
     @DeleteMapping("/{questionId}")
-    public ResponseWrapper deleteQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId, @RequestBody @Valid ModifyQuestionRequest request) {
+    public ResponseWrapper deleteQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId) {
         if (sessionUser == null) {
             throw new NotHaveSessionException();
         }
