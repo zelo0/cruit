@@ -132,4 +132,8 @@ public class UserService {
             return userRepository.findByStackFilterAndCanBeLeader(stackFilterList, Boolean.parseBoolean(leaderFilter), pageable);
         }
     }
+
+    public User findByName(String name) {
+        return userRepository.findByName(name);
+    }
 }
