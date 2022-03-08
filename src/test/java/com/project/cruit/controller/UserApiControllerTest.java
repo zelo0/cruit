@@ -31,7 +31,7 @@ class UserApiControllerTest {
         payload.setEmail("");
         payload.setPassword("12345678");
         payload.setName("na");
-        payload.setPosition("frontend");
+        payload.setPosition("FRONTEND");
 
         mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
                 .andExpect(status().is(400));
@@ -43,7 +43,7 @@ class UserApiControllerTest {
         payload.setEmail("already@gmail.com");
         payload.setPassword("12345678");
         payload.setName("na");
-        payload.setPosition("frontend");
+        payload.setPosition("FRONTEND");
 
         doThrow(new NameExistsException()).when(userService).join(payload.toUser());
 
@@ -58,7 +58,7 @@ class UserApiControllerTest {
         payload.setEmail("already@gmail.com");
         payload.setPassword("12345678");
         payload.setName("na");
-        payload.setPosition("frontend");
+        payload.setPosition("FRONTEND");
 
         doThrow(new EmailExistsException()).when(userService).join(payload.toUser());
 
@@ -66,4 +66,6 @@ class UserApiControllerTest {
                 .andExpect(status().is(400))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다"));
     }
+    
+//    사용자 기술 스택 변경할 때 기존 데이터 테이블에서 제거되는지 확인하는 테스트
 }
