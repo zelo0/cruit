@@ -1,6 +1,7 @@
 package com.project.cruit.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.cruit.domain.notification.QuestionNotification;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +39,9 @@ public class Question {
     @JoinColumn(name = "parent_id")
     @JsonIgnore
     private Question parent;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<QuestionNotification> notifications;
 
     public Question(User questioner, String content, Project project, Question parent) {
         this.questioner = questioner;
