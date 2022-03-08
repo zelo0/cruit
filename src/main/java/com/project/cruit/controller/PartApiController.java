@@ -9,6 +9,7 @@ import com.project.cruit.domain.part.Part;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.service.PartService;
+import com.project.cruit.service.UserPartService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class PartApiController {
     private final PartService partService;
     private final UserService userService;
+    private final UserPartService userPartService;
 
     @GetMapping("/involved")
     private ResponseWrapper getInvolvedParts(@CurrentUser SessionUser sessionUser) {
@@ -39,7 +41,7 @@ public class PartApiController {
 
         User targetUser = userService.findById(sessionUser.getId());
 
-        // 내가 제안한 프로젝트의 파트들
+        // 내가 제안한 프로젝트의 파트 전부
         Set<Part> involvedParts = new HashSet<>();
         List<Project> proposedProjects = targetUser.getProposedProjects();
         for (Project proposedProject : proposedProjects) {
@@ -54,7 +56,13 @@ public class PartApiController {
             }
         }
 
-        return new ResponseWrapper(new GetInvolvePartsResponse(involvedParts.stream().map(PartDto::new).collect(Collectors.toList())));
+
+        // 파트의 리더 존재 유무를 같이 넣음
+        List<PartDto> involvedPartDtos = involvedParts.stream()
+                .map(involvedPart -> new PartDto(involvedPart, userPartService.hasPartLeader(involvedPart)))
+                .collect(Collectors.toList());
+
+        return new ResponseWrapper(new GetInvolvePartsResponse(involvedPartDtos));
     }
 
     @Data
@@ -65,19 +73,21 @@ public class PartApiController {
 
     @Data
     @AllArgsConstructor
-    private static class PartDto {
+    static class PartDto {
         private Long projectId;
         private String projectName;
         private String status;
         private Long id;
         private String position;
+        private Boolean hasLeader;
 
-        public PartDto(Part part) {
+        public PartDto(Part part, Boolean hasLeader) {
             this.projectId = part.getProject().getId();
             this.projectName = part.getProject().getName();
             this.status = part.getStatus().name();
             this.id = part.getId();
             this.position = part.getPosition();
+            this.hasLeader = hasLeader;
         }
     }
 }
