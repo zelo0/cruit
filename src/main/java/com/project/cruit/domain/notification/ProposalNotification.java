@@ -2,6 +2,7 @@ package com.project.cruit.domain.notification;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.Proposal;
+import com.project.cruit.domain.User;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,4 +15,10 @@ public class ProposalNotification extends Notification {
     @JoinColumn(name = "proposal_id")
     @JsonIgnore
     private Proposal proposal;
+
+    public ProposalNotification(Proposal proposal, User subject, String message) {
+        this.proposal = proposal;
+        this.setSubject(subject);
+        this.setMessage(message);
+    }
 }
