@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class ProposalApiController {
         // 이 파트에 대한 제안을 보낼 수 있는 자격이 있는 지 확인 필요
 
         User sender = userService.findById(sessionUser.getId());
-        User receiver = userService.findById(request.getReceiverId());
+        User receiver = userService.findByName(request.getReceiverName());
         Part part = partService.findById(request.getPartId());
 
         proposalService.save(new Proposal(sender, receiver, part, request.getIsLeaderProposal()));
@@ -51,11 +53,11 @@ public class ProposalApiController {
     @NoArgsConstructor
     @AllArgsConstructor
     static class CreateProposalRequest {
-        @NotEmpty
-        private Long receiverId;
-        @NotEmpty
+        @NotBlank
+        private String receiverName;
+        @NotNull
         private Long partId;
-        @NotEmpty
+        @NotNull
         private Boolean isLeaderProposal;
     }
 }
