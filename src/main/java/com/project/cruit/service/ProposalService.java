@@ -15,10 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ProposalService {
     private final ProposalRepository proposalRepository;
+    private final NotificationService notificationService;
 
-
+    /* 제안을 생성하면서 notification도 생성 */
     @Transactional
     public void save(Proposal proposal) {
         proposalRepository.save(proposal);
+        notificationService.createProposalNotification(proposal);
     }
 }
