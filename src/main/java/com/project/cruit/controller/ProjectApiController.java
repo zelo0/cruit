@@ -6,12 +6,14 @@ import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.QuestionDto;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
+import com.project.cruit.service.QuestionService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class ProjectApiController {
     private final ProjectService projectService;
     private final UserService userService;
+    private final QuestionService questionService;
 
     @GetMapping("")
     public PageWrapper<ReadProjectResponse> getProjects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
@@ -106,7 +109,9 @@ public class ProjectApiController {
     @GetMapping("/{projectId}")
     public ResponseWrapper getProject(@PathVariable Long projectId) {
         Project project = projectService.findById(projectId);
-        return new ResponseWrapper(new GetProjectResponse(project));
+        // 부모 없는 질문만 가져와야지 프로젝트의 질문을 다 가져오면 질문의 질문에도 있어서 중복 발생
+        List<Question> hierarchicalQuestions = questionService.findQuestionsByProjectIdAndParentExists(project);
+        return new ResponseWrapper(new GetProjectResponse(project, hierarchicalQuestions));
     }
 
 
@@ -237,15 +242,15 @@ public class ProjectApiController {
         private String name;
         private String description;
         private Output output;
-        private List<Question> questions;
+        private List<QuestionDto> questions;
         private List<DetailPartDto> parts;
 
-        public GetProjectResponse(Project project) {
+        public GetProjectResponse(Project project, List<Question> hierarchicalQuestions) {
             id = project.getId();
             proposer = new SimpleUserInfo(project.getProposer(), false);
             name = project.getName();
             description = project.getDescription();
-            questions = project.getQuestions();
+            questions = hierarchicalQuestions.stream().map(QuestionDto::new).collect(Collectors.toList());
             parts = project.getParts().stream().map(DetailPartDto::new).collect(Collectors.toList());
         }
     }
