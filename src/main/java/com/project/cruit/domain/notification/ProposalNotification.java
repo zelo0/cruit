@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DiscriminatorValue(value = "proposal")
 @NoArgsConstructor
 public class ProposalNotification extends Notification {
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proposal_id")
     @JsonIgnore
     private Proposal proposal;

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DiscriminatorValue(value = "question")
 @NoArgsConstructor
 public class QuestionNotification extends Notification {
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     @JsonIgnore
     private Question question;
