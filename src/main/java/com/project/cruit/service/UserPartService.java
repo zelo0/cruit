@@ -18,4 +18,8 @@ public class UserPartService {
     public void saveUserPart(User user, Part part) {
         userPartRepository.save(new UserPart(user, part));
     }
+
+    public Boolean hasPartLeader(Part part) {
+        return userPartRepository.countByPartAndIsLeader(part, true) > 0;
+    }
 }
