@@ -1,0 +1,14 @@
+# aws
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIASNN7CKCU4QB22XHT
+      secretKey: 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
+    s3:
+      bucket: cruit
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+#    credentials:
+#      instanceProfile: true
