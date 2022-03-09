@@ -24,6 +24,9 @@ public class Notification {
     @JsonIgnore
     private User subject;
 
+    @Column(insertable = false, updatable = false)
+    private String type;
+
     private Boolean isRead = false;
 }
 
