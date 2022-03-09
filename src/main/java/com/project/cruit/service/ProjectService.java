@@ -67,4 +67,9 @@ public class ProjectService {
 
         return project.getId();
     }
+
+    @Transactional
+    public void delete(Project project) {
+        projectRepository.delete(project);
+    }
 }
