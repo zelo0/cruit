@@ -8,6 +8,7 @@ import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.QuestionDto;
 import com.project.cruit.dto.ResponseWrapper;
+import com.project.cruit.dto.SimpleMessageBody;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
@@ -113,7 +114,24 @@ public class ProjectApiController {
         List<Question> hierarchicalQuestions = questionService.findQuestionsByProjectIdAndParentExists(project);
         return new ResponseWrapper(new GetProjectResponse(project, hierarchicalQuestions));
     }
+    
+    @DeleteMapping("/{projectId}")
+    public ResponseWrapper deleteProject(@PathVariable Long projectId, @CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
 
+        // 프로젝트 제안자가 아닌데 삭제하려 하면 exception
+        Project targetProject = projectService.findById(projectId);
+
+        if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
+            throw new NotPermitException();
+        }
+
+        projectService.delete(targetProject);
+        
+        return new ResponseWrapper(new SimpleMessageBody("삭제 성공"));
+    }
 
     @Data
     @AllArgsConstructor
