@@ -7,25 +7,30 @@ import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
+import com.project.cruit.dto.SimpleMessageBody;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.service.NotificationService;
+import com.project.cruit.service.S3UploaderService;
 import com.project.cruit.service.StackService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +42,7 @@ public class UserApiController {
     private final UserService userService;
     private final StackService stackService;
     private final NotificationService notificationService;
+    private final S3UploaderService s3UploaderService;
 
     @GetMapping("")
     public PageWrapper<SearchUserResponse> searchUsers(@RequestParam(name = "q", defaultValue = "") String stackFilter,
@@ -96,6 +102,19 @@ public class UserApiController {
     public ResponseWrapper<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest request) {
         User user = new User(request.getEmail(), request.getPassword(), request.getName(), request.getPosition());
         return new ResponseWrapper<>(new CreateUserResponse(userService.join(user)));
+    }
+
+    @PatchMapping("/me/profile")
+    public ResponseWrapper setMyProfile(@RequestPart("file") MultipartFile file, @CurrentUser SessionUser sessionUser) throws IOException {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
+        // s3에 업로드
+        String fileUrl = s3UploaderService.upload(file, "profiles");
+
+        userService.setProfile(sessionUser.getId(), fileUrl);
+        return new ResponseWrapper(new SetMyProfileResponse(fileUrl));
     }
 
     @PatchMapping("/me/name")
@@ -385,5 +404,11 @@ public class UserApiController {
             this.id = project.getId();
             this.name = project.getName();
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class SetMyProfileResponse {
+        private String profile;
     }
 }
