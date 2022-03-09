@@ -51,6 +51,12 @@ public class UserService {
     }
 
     @Transactional
+    public void setProfile(Long userId, String filePath) {
+        User user = userRepository.findById(userId).get();
+        user.setProfile(filePath);
+    }
+
+    @Transactional
     public String setName(Long userId, String name) {
         User user = userRepository.findById(userId).get();
         user.setName(name);
@@ -136,4 +142,6 @@ public class UserService {
     public User findByName(String name) {
         return userRepository.findByName(name);
     }
+
+
 }
