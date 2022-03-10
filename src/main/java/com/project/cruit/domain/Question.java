@@ -32,7 +32,7 @@ public class Question {
     @JsonIgnore
     private Project project;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Question> children = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +40,7 @@ public class Question {
     @JsonIgnore
     private Question parent;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionNotification> notifications;
 
     public Question(User questioner, String content, Project project, Question parent) {
