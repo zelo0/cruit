@@ -40,6 +40,6 @@ public class NotificationService {
     /* questionNotification 생성해서 insert */
     @Transactional
     public void createQuestionNotification(Question question) {
-        notificationRepository.save(new QuestionNotification(question, question.getProject().getProposer(), "내가 제안한 프로젝트에 질문이 달렸습니다"));
+        notificationRepository.save(new QuestionNotification(question, question.getProject().getProposer(), "내가 제안한 프로젝트에 댓글이 달렸습니다"));
     }
 }
