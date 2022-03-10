@@ -35,8 +35,6 @@ public class QuestionService {
 
     @Transactional
     public void delete(Question question) {
-        // FK 제약 조건 때문에 관련 Notification 먼저 제거 필요
-        question.getNotifications().clear();
         questionRepository.delete(question);
     }
 
