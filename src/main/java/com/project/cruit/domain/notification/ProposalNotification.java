@@ -3,11 +3,13 @@ package com.project.cruit.domain.notification;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.Proposal;
 import com.project.cruit.domain.User;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @DiscriminatorValue(value = "proposal")
 @NoArgsConstructor
 public class ProposalNotification extends Notification {
