@@ -4,6 +4,8 @@ import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.notification.Notification;
+import com.project.cruit.domain.notification.ProposalNotification;
+import com.project.cruit.domain.notification.QuestionNotification;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
@@ -94,7 +96,20 @@ public class UserApiController {
         User user = userService.findById(sessionUser.getId());
         long unReadCount = notificationService.getUnReadNotificationCount(user);
         List<Notification> unReadNotifications = notificationService.getUnReadNotifications(user);
-        return new ResponseWrapper<>(new GetMyHeadResponse(user.getName(), unReadCount, unReadNotifications));
+
+        List<NotificationDto> unReadNotificationDtos = new ArrayList<>();
+        for (Notification notification : unReadNotifications) {
+            if (notification.getType().equals("question")) {
+                // QuestionNotification이면 projectId 찾아서 생성
+                QuestionNotification questionNotification = (QuestionNotification) notification;
+                unReadNotificationDtos.add(new NotificationDto(notification, questionNotification.getQuestion().getProject().getId()));
+            } else if (notification.getType().equals("proposal")) {
+                // ProposalNotification이면 relatedId 값으로 proposalId 넘겨줌
+                ProposalNotification proposalNotification = (ProposalNotification) notification;
+                unReadNotificationDtos.add(new NotificationDto(notification, proposalNotification.getProposal().getId()));
+            }
+        }
+        return new ResponseWrapper<>(new GetMyHeadResponse(user.getName(), unReadCount, unReadNotificationDtos));
     }
 
 
@@ -241,7 +256,7 @@ public class UserApiController {
     static class GetMyHeadResponse {
         private String name;
         private long notificationCount;
-        private List<Notification> notifications;
+        private List<NotificationDto> notifications;
     }
 
     @Data
@@ -410,5 +425,21 @@ public class UserApiController {
     @AllArgsConstructor
     static class SetMyProfileResponse {
         private String profile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class NotificationDto {
+        private Long id;
+        private Long relatedId; // question이면 projectId, proposal이면 proposalId
+        private String message;
+        private String type;
+
+        public NotificationDto(Notification notification, Long relatedId) {
+            this.id = notification.getId();
+            this.message = notification.getMessage();
+            this.type = notification.getType();
+            this.relatedId = relatedId;
+        }
     }
 }
