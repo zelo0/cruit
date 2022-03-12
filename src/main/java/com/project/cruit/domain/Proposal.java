@@ -2,6 +2,7 @@ package com.project.cruit.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.part.Part;
+import com.project.cruit.domain.status.ProposalStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
