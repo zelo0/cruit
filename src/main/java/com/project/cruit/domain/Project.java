@@ -2,6 +2,7 @@ package com.project.cruit.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.part.Part;
+import com.project.cruit.domain.status.ProjectStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +29,9 @@ public class Project {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private ProjectStatus status = ProjectStatus.PUBLIC;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "output_id")
