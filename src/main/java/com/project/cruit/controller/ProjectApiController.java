@@ -2,17 +2,14 @@ package com.project.cruit.controller;
 
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
-import com.project.cruit.dto.PageWrapper;
+import com.project.cruit.domain.status.PartStatus;
+import com.project.cruit.dto.*;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.Stack;
-import com.project.cruit.dto.QuestionDto;
-import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.dto.SimpleMessageBody;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
-import com.project.cruit.service.PartService;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.QuestionService;
 import com.project.cruit.service.UserService;
@@ -93,6 +90,23 @@ public class ProjectApiController {
 
         Long afterChangeProjectId = projectService.modifyText(request.getId(), request.getName(), request.getDescription());
         return new ResponseWrapper(new SetProjectTextResponse(afterChangeProjectId));
+    }
+
+    @PatchMapping("/status")
+    public ResponseWrapper setProjectStatus(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectStatusRequest request) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
+        // 프로젝트 제안자가 아닌데 수정하려 하면 exception
+        Project targetProject = projectService.findById(request.getId());
+
+        if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
+            throw new NotPermitException();
+        }
+
+        projectService.modifyStatus(request.getId(), request.getStatus());
+        return new ResponseWrapper(new SimpleMessageBody("상태 변경 성공"));
     }
 
     @PostMapping("")
@@ -273,29 +287,19 @@ public class ProjectApiController {
         }
     }
 
-    @Data
-    static class SimpleUserInfo {
-        private Long id;
-        private String name;
-        private String profile;
-        private Boolean isLeader;
 
-        public SimpleUserInfo(User user, Boolean isLeader) {
-            id = user.getId();
-            name = user.getName();
-            profile = user.getProfile();
-            this.isLeader = isLeader;
-        }
-    }
 
     @Data
     @AllArgsConstructor
     static class GetProjectSimpleResponse {
         private String name;
         private String description;
+        private String status;
+
 
         public GetProjectSimpleResponse(Project project) {
             this.name = project.getName();
+            this.status = project.getStatus().name();
             this.description = project.getDescription();
         }
     }
@@ -313,5 +317,13 @@ public class ProjectApiController {
     @AllArgsConstructor
     static class SetProjectTextResponse {
         private Long projectId;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SetProjectStatusRequest {
+        private Long id;
+        private String status;
     }
 }
