@@ -30,16 +30,16 @@ public class StackService {
         return stackRepository.findByName(stackName);
     }
 
-    public List<? extends Stack> findAllByPosition(Position position) {
+    public List<? extends Stack> findAllByPosition(String  position) {
         List<? extends Stack> result = null;
         switch (position) {
-            case FRONTEND:
+            case "FRONTEND":
                 result =  frontendStackRepository.findAll();
                 break;
-            case BACKEND:
+            case "BACKEND":
                 result =   backendStackRepository.findAll();
                 break;
-            case DESIGN:
+            case "DESIGN":
                 result =   designStackRepository.findAll();
                 break;
         }

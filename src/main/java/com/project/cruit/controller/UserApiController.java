@@ -82,7 +82,7 @@ public class UserApiController {
         }
 
         User me = userService.findById(sessionUser.getId());
-        return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition())));
+        return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition().name())));
     }
 
     @GetMapping("/me/head")
@@ -147,7 +147,7 @@ public class UserApiController {
             throw new NotHaveSessionException();
         }
         Position changedPosition = userService.setPosition(sessionUser.getId(), request.getPosition());
-        List<? extends Stack> selectableStacks = stackService.findAllByPosition(changedPosition);
+        List<? extends Stack> selectableStacks = stackService.findAllByPosition(changedPosition.name());
         return new ResponseWrapper<>(new SetMyPositionResponse(changedPosition.name(), (List<Stack>) selectableStacks));
     }
 
@@ -208,9 +208,9 @@ public class UserApiController {
         @Pattern(regexp = "FRONTEND|BACKEND|DESIGN") // 정해진 값이 맞는 지 확인
         private String position;
 
-        public User toUser() {
-            return new User(this.getEmail(), this.getPassword(), this.getName(), this.getPosition());
-        }
+//        public User toUser() {
+//            return new User(this.getEmail(), this.getPassword(), this.getName(), this.getPosition());
+//        }
     }
 
     @Data
