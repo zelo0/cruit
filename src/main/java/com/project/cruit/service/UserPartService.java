@@ -22,4 +22,8 @@ public class UserPartService {
     public Boolean hasPartLeader(Part part) {
         return userPartRepository.countByPartAndIsLeader(part, true) > 0;
     }
+
+    public UserPart findByPartAndUser(Part part, User member) {
+        return userPartRepository.findByPartAndUser(part, member);
+    }
 }
