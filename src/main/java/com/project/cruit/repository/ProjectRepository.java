@@ -12,8 +12,11 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    @Query("select p from Project p join p.parts pa join pa.partStacks ps join ps.stack s where s.name in :stacks")
+    @Query("select p from Project p join p.parts pa join pa.partStacks ps join ps.stack s where s.name in :stacks and p.status = 'PUBLIC'")
     Page<Project> findByStackFilter(@Param("stacks") List<String> stacks, Pageable pageable);
+
+    @Query("select p from Project p where p.status = 'PUBLIC'")
+    Page<Project> findAllPublic(Pageable pageable);
 
 //    Page<Project> findAllEfficient(Pageable pageable);
 }
