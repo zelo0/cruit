@@ -5,6 +5,7 @@ import com.project.cruit.domain.part.DesignPart;
 import com.project.cruit.domain.part.FrontendPart;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.Project;
+import com.project.cruit.domain.status.ProjectStatus;
 import com.project.cruit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
 
     public Page<Project> findAll(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+        return projectRepository.findAllPublic(pageable);
     }
 
     @Transactional
@@ -71,5 +72,15 @@ public class ProjectService {
     @Transactional
     public void delete(Project project) {
         projectRepository.delete(project);
+    }
+
+    @Transactional
+    public void modifyStatus(Long id, String status) {
+        Project project = projectRepository.findById(id).get();
+        if (status == "PUBLIC") {
+            project.setStatus(ProjectStatus.PUBLIC);
+        } else {
+            project.setStatus(ProjectStatus.PRIVATE);
+        }
     }
 }
