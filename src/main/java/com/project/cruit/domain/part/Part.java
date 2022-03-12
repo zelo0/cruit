@@ -3,6 +3,7 @@ package com.project.cruit.domain.part;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.domain.status.PartStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,10 +32,10 @@ public abstract class Part {
     @Column(insertable = false, updatable = false)
     private String position;
 
-    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartStack> partStacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserPart> userParts = new ArrayList<>();
 
     public Part(Project project) {
