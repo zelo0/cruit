@@ -21,7 +21,7 @@ public class QuestionService {
         // question 생성
         questionRepository.save(question);
         // notification 생성
-        notificationService.createQuestionNotification(question);
+        notificationService.createQuestionNotification(question, question.getProject().getProposer(),"내가 제안한 프로젝트에 댓글이 달렸습니다");
     }
 
     public Question findById(Long questionId) {
@@ -40,7 +40,12 @@ public class QuestionService {
 
     @Transactional
     public void addChild(Question parentQuestion, Question question) {
+        // childQuestion 생성, 추가
         parentQuestion.addChildQuestion(question);
+        // notification 생성 - 프로젝트에 댓글이 달렸다는 알림
+        notificationService.createQuestionNotification(question, question.getProject().getProposer(),"내가 제안한 프로젝트에 댓글이 달렸습니다");
+        // notification 생성 - 내가 쓴 댓글에 댓글이 달렸다는 알림
+        notificationService.createQuestionNotification(question, parentQuestion.getQuestioner(), "내가 쓴 댓글에 댓글이 달렸습니다");
     }
 
     public List<Question> findQuestionsByProjectIdAndParentExists(Project project) {
