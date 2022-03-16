@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -34,6 +35,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(new SimpleMessageBody("필드의 경고를 확인 후 수정해주세요"));
     }
 
+
     @ExceptionHandler(MismatchedInputException.class)
     public ResponseEntity<SimpleMessageBody> handleMismatchedInputException(Exception e) {
         log.error(e.getMessage());
@@ -45,10 +47,24 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
         return new ResponseEntity(new SimpleMessageBody(e.getMessage()), HttpStatus.FORBIDDEN);
     }
+
+    // optional 객체에 들은 게 없을 때 get을 호출할 때, ....
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<SimpleMessageBody> handleNoSuchElementExceptionException(Exception e) {
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(new SimpleMessageBody("존재하지 않는 값을 요청했습니다"));
+    }
     
     // 이미 닫힌 파트의 제안을 승낙할 시 예외 처리
     @ExceptionHandler(AlreadyClosedPartException.class)
     public ResponseEntity<SimpleMessageBody> handleAlreadyClosedPartException(Exception e){
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(new SimpleMessageBody(e.getMessage()));
+    }
+
+    // 유효하지 않은 페이지 검색 시
+    @ExceptionHandler(InvalidPageOffsetException.class)
+    public ResponseEntity<SimpleMessageBody> handleInvalidPageOffsetException(Exception e){
         log.error(e.getMessage());
         return ResponseEntity.badRequest().body(new SimpleMessageBody(e.getMessage()));
     }
