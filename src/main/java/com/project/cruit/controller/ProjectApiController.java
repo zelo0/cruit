@@ -12,6 +12,7 @@ import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.service.ProjectService;
 import com.project.cruit.service.QuestionService;
+import com.project.cruit.service.UserPartService;
 import com.project.cruit.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class ProjectApiController {
     private final ProjectService projectService;
     private final UserService userService;
     private final QuestionService questionService;
+    private final UserPartService userPartService;
 
     @GetMapping("")
     public PageWrapper<ReadProjectResponse> getProjects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
@@ -215,10 +217,11 @@ public class ProjectApiController {
     }
 
     @Data
-    static class DetailPartDto {
+    class DetailPartDto {
         private Long id;
         private String status;
         private String position;
+        private Boolean hasPartLeader;
         private List<Stack> stacks = new ArrayList<>();
         private List<SimpleUserInfo> partMembers = new ArrayList<>();
 
@@ -226,6 +229,8 @@ public class ProjectApiController {
             this.id = part.getId();
             this.status = part.getStatus().name();
             this.position = part.getPosition();
+            this.hasPartLeader = userPartService.hasPartLeader(part);
+
             List<PartStack> partStacks = part.getPartStacks();
             for (PartStack partStack : partStacks) {
                 this.stacks.add(partStack.getStack());
@@ -268,7 +273,7 @@ public class ProjectApiController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    static class GetProjectResponse {
+    class GetProjectResponse {
         private Long id;
         private SimpleUserInfo proposer;
         private String name;
