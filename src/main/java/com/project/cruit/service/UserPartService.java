@@ -26,4 +26,8 @@ public class UserPartService {
     public UserPart findByPartAndUser(Part part, User member) {
         return userPartRepository.findByPartAndUser(part, member);
     }
+
+    public User findLeaderOfPart(Part part) {
+        return userPartRepository.findByPartAndIsLeader(part, true);
+    }
 }
