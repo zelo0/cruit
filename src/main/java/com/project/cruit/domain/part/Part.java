@@ -49,6 +49,10 @@ public abstract class Part {
         userParts.add(new UserPart(user, this));
     }
 
+    public void addMemberWithIsLeader(User user, Boolean isLeader) {
+        userParts.add(new UserPart(user, this, isLeader));
+    }
+
     public void addStack(Stack stack) {
         partStacks.add(new PartStack(this, stack));}
 }
