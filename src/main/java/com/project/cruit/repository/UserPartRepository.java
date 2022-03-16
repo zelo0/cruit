@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface UserPartRepository extends JpaRepository<UserPart, Long> {
     long countByPartAndIsLeader(Part part, boolean isLeader);
     UserPart findByPartAndUser(Part part, User member);
+
+    User findByPartAndIsLeader(Part part, boolean isLeader);
 }
