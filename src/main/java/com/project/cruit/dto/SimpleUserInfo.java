@@ -11,9 +11,9 @@ public class SimpleUserInfo {
     private Boolean isLeader;
 
     public SimpleUserInfo(User user, Boolean isLeader) {
-        id = user.getId();
-        name = user.getName();
-        profile = user.getProfile();
+        this.id = user.getId();
+        this.name = user.getName();
+        this.profile = user.getProfile();
         this.isLeader = isLeader;
     }
 }
