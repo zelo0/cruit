@@ -17,16 +17,25 @@ public class Notification {
     @Column(name = "notification_id")
     private Long id;
 
-    private String message;
+    protected String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     @JsonIgnore
-    private User subject;
+    protected User subject;
 
-    @Column(insertable = false, updatable = false)
+    @Column(insertable = false, updatable = false, nullable = true)
     private String type;
 
     private Boolean isRead = false;
+
+    // 참조할 id 없는, 메시지만 있는 notification 생성자
+    public Notification(User subject, String message) {
+        this.subject = subject;
+        this.message = message;
+    }
+
+    public Notification() {
+    }
 }
 
