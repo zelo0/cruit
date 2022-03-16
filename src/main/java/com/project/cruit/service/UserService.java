@@ -5,6 +5,7 @@ import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserStack;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.exception.EmailExistsException;
+import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NameExistsException;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -144,4 +145,23 @@ public class UserService {
     }
 
 
+    public Page<User> findPageByStackAndLeader(PageRequest pageRequest, String stackFilter, String leaderFilter, int page) {
+        Page<User> users;
+        if (stackFilter.isBlank()) {
+            // 굳이 조인할 필요 없으니 if문으로 분기
+            users =  findByNoStackFilter(pageRequest, leaderFilter);
+        } else {
+            List<String> stackFilterList = List.of(stackFilter.split(";"));
+            users = findByStackFilter(stackFilterList, leaderFilter, pageRequest);
+        }
+
+        System.out.println("users = " + users.getContent());
+
+        // page offset이 너무 크면 에러
+        if (users.getTotalPages() != 0 && users.getTotalPages() <= page) {
+            throw new InvalidPageOffsetException();
+        }
+
+        return users;
+    }
 }

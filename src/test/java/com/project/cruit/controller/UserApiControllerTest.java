@@ -1,16 +1,40 @@
 package com.project.cruit.controller;
 
 import com.google.gson.Gson;
+import com.project.cruit.controller.UserApiController.CreateUserRequest;
+import com.project.cruit.domain.Position;
+import com.project.cruit.domain.User;
+import com.project.cruit.dto.PageWrapper;
+import com.project.cruit.dto.SearchUserDto;
 import com.project.cruit.exception.EmailExistsException;
+import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NameExistsException;
+import com.project.cruit.service.NotificationService;
+import com.project.cruit.service.S3UploaderService;
+import com.project.cruit.service.StackService;
 import com.project.cruit.service.UserService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.internal.exceptions.stacktrace.StackTraceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,50 +46,110 @@ class UserApiControllerTest {
 
     @MockBean
     private UserService userService;
+    @MockBean
+    private StackService stackService;
+    @MockBean
+    private NotificationService notificationService;
+    @MockBean
+    private S3UploaderService s3UploaderService;
 
     private Gson gson = new Gson();
 
-    @Test
-    public void create_invalidEmail_shouldFailAndReturn400() throws Exception {
-        UserApiController.CreateUserRequest payload = new UserApiController.CreateUserRequest();
-        payload.setEmail("");
-        payload.setPassword("12345678");
-        payload.setName("na");
-        payload.setPosition("FRONTEND");
 
-        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
-                .andExpect(status().is(400));
+    @Test
+    @DisplayName("쿼리 없는 유저 검색")
+    void searchUsersWithNoFilter() throws Exception {
+        // given
+        doReturn(userPage()).when(userService).findPageByStackAndLeader(pageRequest(), "", "all", 0);
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/api/v1/users"));
+
+        // then
+        MvcResult mvcResult = resultActions.andExpect(status().isOk()).andReturn();
+        PageWrapper<List<SearchUserDto>> response = gson.fromJson(mvcResult.getResponse().getContentAsString(), PageWrapper.class);
+        assertThat(response.getData().size()).isEqualTo(5);
     }
 
     @Test
-    public void create_existedName_shouldFailAndReturn400() throws  Exception {
-        UserApiController.CreateUserRequest payload = new UserApiController.CreateUserRequest();
-        payload.setEmail("already@gmail.com");
-        payload.setPassword("12345678");
-        payload.setName("na");
-        payload.setPosition("FRONTEND");
+    @DisplayName("페이지 범위를 벗어나는 유저 검색")
+    void searchUsersWithInvalidPageOffset() throws Exception {
+        // given
+        doThrow((new InvalidPageOffsetException())).when(userService)
+                .findPageByStackAndLeader(PageRequest.of(2, 12, Sort.by(Sort.Direction.DESC, "id")),
+                "", "all", 2);
 
-        doThrow(new NameExistsException()).when(userService).join(payload.toUser());
+        // when
+        ResultActions resultActions = mvc.perform(get("/api/v1/users?page=2"));
 
-        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
-                .andExpect(status().is(400))
-                .andExpect(jsonPath("$.message").value("이미 존재하는 이름입니다"));
+        // then
+        resultActions.andExpect(status().isBadRequest()).
+                andExpect(jsonPath("$.message").value("유효한 페이지 범위를 벗어났습니다."));
     }
 
-    @Test
-    public void create_existedEmail_shouldFailAndReturn400() throws  Exception {
-        UserApiController.CreateUserRequest payload = new UserApiController.CreateUserRequest();
-        payload.setEmail("already@gmail.com");
-        payload.setPassword("12345678");
-        payload.setName("na");
-        payload.setPosition("FRONTEND");
-
-        doThrow(new EmailExistsException()).when(userService).join(payload.toUser());
-
-        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
-                .andExpect(status().is(400))
-                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다"));
+    private Page<User> userPage() {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            users.add(new User("a@test.com", "test", "test", Position.DESIGN.name()));
+//                    User.builder()
+//                    .email("a@test.com")
+//                    .password("test")
+//                    .name("test")
+//                    .position(Position.DESIGN)
+//                    .build());
+        }
+        return new PageImpl<>(users);
     }
+
+    // requestParam이 비었을 시 값들
+    private PageRequest pageRequest() {
+        return PageRequest.of(0, 12, Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+
+
+
+//    @Test
+//    public void create_invalidEmail_shouldFailAndReturn400() throws Exception {
+//        CreateUserRequest payload = new CreateUserRequest();
+//        payload.setEmail("");
+//        payload.setPassword("12345678");
+//        payload.setName("na");
+//        payload.setPosition("FRONTEND");
+//
+//        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
+//                .andExpect(status().is(400));
+//    }
+//
+//    @Test
+//    public void create_existedName_shouldFailAndReturn400() throws  Exception {
+//        CreateUserRequest payload = new CreateUserRequest();
+//        payload.setEmail("already@gmail.com");
+//        payload.setPassword("12345678");
+//        payload.setName("na");
+//        payload.setPosition("FRONTEND");
+//
+//        doThrow(new NameExistsException()).when(userService).join(payload.toUser());
+//
+//        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
+//                .andExpect(status().is(400))
+//                .andExpect(jsonPath("$.message").value("이미 존재하는 이름입니다"));
+//    }
+//
+//    @Test
+//    public void create_existedEmail_shouldFailAndReturn400() throws  Exception {
+//        CreateUserRequest payload = new CreateUserRequest();
+//        payload.setEmail("already@gmail.com");
+//        payload.setPassword("12345678");
+//        payload.setName("na");
+//        payload.setPosition("FRONTEND");
+//
+//        doThrow(new EmailExistsException()).when(userService).join(payload.toUser());
+//
+//        mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(payload)))
+//                .andExpect(status().is(400))
+//                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다"));
+//    }
     
 //    사용자 기술 스택 변경할 때 기존 데이터 테이블에서 제거되는지 확인하는 테스트
 }
