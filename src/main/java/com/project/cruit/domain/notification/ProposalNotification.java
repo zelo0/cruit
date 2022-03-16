@@ -1,7 +1,7 @@
 package com.project.cruit.domain.notification;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.cruit.domain.Proposal;
+import com.project.cruit.domain.proposal.Proposal;
 import com.project.cruit.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class ProposalNotification extends Notification {
 
     public ProposalNotification(Proposal proposal, User subject, String message) {
         this.proposal = proposal;
-        this.setSubject(subject);
-        this.setMessage(message);
+        this.subject = subject;
+        this.message = message;
     }
 }
