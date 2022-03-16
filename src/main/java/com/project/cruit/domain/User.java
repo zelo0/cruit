@@ -1,6 +1,7 @@
 package com.project.cruit.domain;
 
 import com.project.cruit.domain.notification.Notification;
+import com.project.cruit.domain.proposal.Proposal;
 import lombok.Getter;
 import lombok.Setter;
 
