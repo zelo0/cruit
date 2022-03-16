@@ -46,6 +46,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(new SimpleMessageBody(e.getMessage()), HttpStatus.FORBIDDEN);
     }
     
+    // 이미 닫힌 파트의 제안을 승낙할 시 예외 처리
+    @ExceptionHandler(AlreadyClosedPartException.class)
+    public ResponseEntity<SimpleMessageBody> handleAlreadyClosedPartException(Exception e){
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(new SimpleMessageBody(e.getMessage()));
+    }
+    
     @ExceptionHandler(IOException.class)
     public ResponseEntity<SimpleMessageBody> handleIOException(Exception e){
         log.error(e.getMessage());
