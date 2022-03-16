@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CruitApplication {
 
 	public static final String APPLICATION_LOCATIONS = "spring.config.location="
-			+ "classpath:application.yml,"
+			+ "classpath:application-dev.yml,"
 			+ "classpath:aws.yml";
 
 	public static void main(String[] args) {
