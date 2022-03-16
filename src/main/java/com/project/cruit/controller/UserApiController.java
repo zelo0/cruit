@@ -89,7 +89,7 @@ public class UserApiController {
     public ResponseWrapper<GetMyHeadResponse> getMyHead(@CurrentUser SessionUser sessionUser) {
         // session이 없으면 빈 문자열 반환
         if (sessionUser == null) {
-            return new ResponseWrapper<>(new GetMyHeadResponse("", 0, new ArrayList<>()));
+            return new ResponseWrapper<>(new GetMyHeadResponse("",  "",0, new ArrayList<>()));
         }
 
         // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제 -  쿼리 필요
@@ -107,9 +107,12 @@ public class UserApiController {
                 // ProposalNotification이면 relatedId 값으로 proposalId 넘겨줌
                 ProposalNotification proposalNotification = (ProposalNotification) notification;
                 unReadNotificationDtos.add(new NotificationDto(notification, proposalNotification.getProposal().getId()));
+            } else {
+                // relatedId가 없는, 메시지만 있는 notification이면
+                unReadNotificationDtos.add(new NotificationDto(notification, null));
             }
         }
-        return new ResponseWrapper<>(new GetMyHeadResponse(user.getName(), unReadCount, unReadNotificationDtos));
+        return new ResponseWrapper<>(new GetMyHeadResponse(user.getName(), user.getPosition().name(), unReadCount, unReadNotificationDtos));
     }
 
 
@@ -255,6 +258,7 @@ public class UserApiController {
     @AllArgsConstructor
     static class GetMyHeadResponse {
         private String name;
+        private String position;
         private long notificationCount;
         private List<NotificationDto> notifications;
     }
