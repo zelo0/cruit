@@ -1,11 +1,8 @@
 package com.project.cruit.service;
 
-import com.project.cruit.domain.PartStack;
-import com.project.cruit.domain.User;
-import com.project.cruit.domain.UserPart;
+import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.domain.status.PartStatus;
-import com.project.cruit.domain.Project;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,7 @@ public class PartService {
     private final PartRepository partRepository;
     private final UserService userService;
     private final UserPartService userPartService;
+    private final NotificationService notificationService;
 
     @Transactional
     public void saveParts(List<Part> partList) {
@@ -69,5 +67,22 @@ public class PartService {
         User member = userService.findById(memberId);
         UserPart target = userPartService.findByPartAndUser(part, member);
         part.getUserParts().remove(target);
+        // 파트에서 추방됐다는 notification 보냄
+        notificationService.createNonReferenceNotification(member, "'" + part.getProject().getName() + "'" + "프로젝트에서 추방됐습니다");
+    }
+
+    public User getLeader(Part part) {
+        return userPartService.findLeaderOfPart(part);
+    }
+
+    public Part getPart(Project project, Position position) {
+        switch (position) {
+            case FRONTEND:
+                return getFrontendPart(project);
+            case BACKEND:
+                return getBackendPart(project);
+            default:
+                return getDesignPart(project);
+        }
     }
 }
