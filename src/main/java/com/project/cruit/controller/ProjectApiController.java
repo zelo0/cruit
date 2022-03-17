@@ -6,7 +6,6 @@ import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.dto.*;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.part.Part;
-import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +37,7 @@ public class ProjectApiController {
     private final UserPartService userPartService;
 
     @GetMapping("")
-    public PageWrapper<ReadProjectResponse> getProjects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
+    public PageWrapper<SimpleProjectDto> getProjects(@RequestParam(name = "q", defaultValue = "") String stackFilter,
                                                      @RequestParam(name="page", defaultValue = "0") int page,
                                                      @RequestParam(name = "limit", defaultValue = "12") int limit) {
         Page<Project> projects;
@@ -55,7 +53,7 @@ public class ProjectApiController {
             throw new InvalidPageOffsetException();
         }
 
-        List<ReadProjectResponse> responses = projects.stream().map(ReadProjectResponse::new).collect(Collectors.toList());
+        List<SimpleProjectDto> responses = projects.stream().map(SimpleProjectDto::new).collect(Collectors.toList());
         return new PageWrapper(responses, projects.hasPrevious(), projects.hasNext(), projects.getTotalPages(), projects.getNumber());
     }
 
@@ -74,6 +72,18 @@ public class ProjectApiController {
         }
 
         return new ResponseWrapper(new GetProjectSimpleResponse(targetProject));
+    }
+
+    // 내가 참여 중인 프로젝트 보여주기
+    @GetMapping("/me")
+    public ResponseWrapper getMyProjects(@CurrentUser SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new NotHaveSessionException();
+        }
+
+        List<Project> myProjects = projectService.findAllProjectByUserId(sessionUser.getId());
+
+        return new ResponseWrapper(new GetMyProjectsResponse(myProjects));
     }
 
     @PatchMapping("/text")
@@ -128,7 +138,7 @@ public class ProjectApiController {
         Project project = projectService.findById(projectId);
         // 부모 없는 질문만 가져와야지 프로젝트의 질문을 다 가져오면 질문의 질문에도 있어서 중복 발생
         List<Question> hierarchicalQuestions = questionService.findQuestionsByProjectIdAndParentExists(project);
-        return new ResponseWrapper(new GetProjectResponse(project, hierarchicalQuestions));
+        return new ResponseWrapper(new DetailProjectDto(project, hierarchicalQuestions));
     }
     
     @DeleteMapping("/{projectId}")
@@ -159,108 +169,12 @@ public class ProjectApiController {
         private String description;
     }
 
-    @Data
-    private class ReadProjectResponse {
-        private Long id;
-        private String proposerProfile;
-        private String proposerName;
-        private PartStatus status;
-//        private String description;
-        private String name;
-        private SimplePartDto frontendPart;
-        private SimplePartDto backendPart;
-        private SimplePartDto designPart;
-
-        public ReadProjectResponse(Project project) {
-            id = project.getId();
-            proposerProfile = project.getProposer().getProfile();
-            proposerName = project.getProposer().getName();
-//            description = project.getDescription();
-            name = project.getName();
-            List<Part> parts = project.getParts();
-            for (Part part : parts) {
-                switch (part.getPosition()) {
-                    case "FRONTEND":
-                        frontendPart = new SimplePartDto(part);
-                        break;
-                    case "BACKEND":
-                        backendPart = new SimplePartDto(part);
-                        break;
-                    case "DESIGN":
-                        designPart = new SimplePartDto(part);
-                        break;
-                }
-            }
-        }
-    }
-
-    @Data
-    static class SimplePartDto {
-        private PartStatus status;
-        private List<StackImage> stacks = new ArrayList<>();
-        private List<UserImage> partMembers = new ArrayList<>();
-
-        public SimplePartDto(Part part) {
-            status = part.getStatus();
-            List<PartStack> partStacks = part.getPartStacks();
-            for (PartStack partStack : partStacks) {
-                Stack stack = partStack.getStack();
-                stacks.add(new StackImage(stack));
-            }
-
-            List<UserPart> userPartList = part.getUserParts();
-            for (UserPart userPart : userPartList) {
-                User user = userPart.getUser();
-                partMembers.add(new UserImage(user));
-            }
-        }
-    }
-
-    @Data
-    class DetailPartDto {
-        private Long id;
-        private String status;
-        private String position;
-        private Boolean hasPartLeader;
-        private List<Stack> stacks = new ArrayList<>();
-        private List<SimpleUserInfo> partMembers = new ArrayList<>();
-
-        public DetailPartDto(Part part) {
-            this.id = part.getId();
-            this.status = part.getStatus().name();
-            this.position = part.getPosition();
-            this.hasPartLeader = userPartService.hasPartLeader(part);
-
-            List<PartStack> partStacks = part.getPartStacks();
-            for (PartStack partStack : partStacks) {
-                this.stacks.add(partStack.getStack());
-            }
-
-            List<UserPart> userParts = part.getUserParts();
-            for (UserPart userPart : userParts) {
-                this.partMembers.add(new SimpleUserInfo(userPart.getUser(), userPart.getIsLeader()));
-            }
-        }
-    }
 
 
-    @Data
-    static class StackImage {
-        private String image;
 
-        public StackImage(Stack stack) {
-            image = stack.getImage();
-        }
-    }
 
-    @Data
-    static class UserImage {
-        private String profile;
 
-        public UserImage(User user) {
-            profile = user.getProfile();
-        }
-    }
+
 
     @Data
     @AllArgsConstructor
@@ -270,27 +184,7 @@ public class ProjectApiController {
     }
 
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    class GetProjectResponse {
-        private Long id;
-        private SimpleUserInfo proposer;
-        private String name;
-        private String description;
-        private Output output;
-        private List<QuestionDto> questions;
-        private List<DetailPartDto> parts;
 
-        public GetProjectResponse(Project project, List<Question> hierarchicalQuestions) {
-            id = project.getId();
-            proposer = new SimpleUserInfo(project.getProposer(), false);
-            name = project.getName();
-            description = project.getDescription();
-            questions = hierarchicalQuestions.stream().map(QuestionDto::new).collect(Collectors.toList());
-            parts = project.getParts().stream().map(DetailPartDto::new).collect(Collectors.toList());
-        }
-    }
 
 
 
