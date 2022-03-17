@@ -1,5 +1,7 @@
 package com.project.cruit.service;
 
+import com.project.cruit.domain.User;
+import com.project.cruit.domain.UserPart;
 import com.project.cruit.domain.part.BackendPart;
 import com.project.cruit.domain.part.DesignPart;
 import com.project.cruit.domain.part.FrontendPart;
@@ -14,12 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final UserService userService;
+    private final UserPartService userPartService;
 
     public Page<Project> findAll(Pageable pageable) {
         return projectRepository.findAllPublic(pageable);
@@ -82,5 +87,11 @@ public class ProjectService {
         } else {
             project.setStatus(ProjectStatus.PRIVATE);
         }
+    }
+
+    public List<Project> findAllProjectByUserId(Long userId) {
+        User user = userService.findById(userId);
+        List<UserPart> userParts = userPartService.findAllByUser(user);
+        return userParts.stream().map(userPart -> userPart.getPart().getProject()).collect(Collectors.toList());
     }
 }

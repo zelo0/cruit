@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,5 +31,9 @@ public class UserPartService {
 
     public User findLeaderOfPart(Part part) {
         return userPartRepository.findByPartAndIsLeader(part, true);
+    }
+
+    public List<UserPart> findAllByUser(User user) {
+        return userPartRepository.findAllByUser(user);
     }
 }
