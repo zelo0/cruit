@@ -27,7 +27,7 @@ public class Project extends BaseTimeEntity {
 
     private String name;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -42,6 +42,9 @@ public class Project extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Part> parts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
 
     public Project() {
     }
