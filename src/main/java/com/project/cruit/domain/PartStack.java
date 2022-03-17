@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class PartStack {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "part_stack_id")
     private Long id;
 

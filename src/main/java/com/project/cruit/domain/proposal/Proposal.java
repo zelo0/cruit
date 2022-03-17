@@ -21,7 +21,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Proposal extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "proposal_id")
     private Long id;
 

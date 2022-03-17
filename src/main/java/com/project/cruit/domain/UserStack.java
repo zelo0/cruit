@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 public class UserStack {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_stack_id")
     private Long id;
 

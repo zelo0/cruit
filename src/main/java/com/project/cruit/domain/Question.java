@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Question extends BaseTimeEntity{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
     private Long id;
 

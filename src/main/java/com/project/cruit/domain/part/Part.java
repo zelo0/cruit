@@ -17,7 +17,7 @@ import java.util.List;
 @Getter @Setter
 public abstract class Part {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "part_id")
     private Long id;
 

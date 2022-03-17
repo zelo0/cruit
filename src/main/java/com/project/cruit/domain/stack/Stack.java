@@ -16,7 +16,7 @@ import java.util.List;
 public class Stack {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stack_id")
     private Long id;
 
