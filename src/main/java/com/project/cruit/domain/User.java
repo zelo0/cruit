@@ -2,6 +2,8 @@ package com.project.cruit.domain;
 
 import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.proposal.Proposal;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,8 +13,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+//@Builder
+@AllArgsConstructor
 @Getter @Setter
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "user_id")

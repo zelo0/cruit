@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Question {
+public class Question extends BaseTimeEntity{
     @Id
     @GeneratedValue
     @Column(name = "question_id")

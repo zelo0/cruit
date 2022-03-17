@@ -1,21 +1,25 @@
 package com.project.cruit.domain.proposal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.cruit.domain.BaseTimeEntity;
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.status.ProposalStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter @Setter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @NoArgsConstructor
-public class Proposal {
+public class Proposal extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "proposal_id")
@@ -44,6 +48,8 @@ public class Proposal {
 
     @Enumerated(EnumType.STRING)
     private ProposalStatus status = ProposalStatus.WAITING;
+
+
 
     public Proposal(User sender, User receiver, Part part, Boolean isLeaderProposal) {
         this.sender = sender;

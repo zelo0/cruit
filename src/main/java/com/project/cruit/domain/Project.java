@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Project {
+public class Project extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "project_id")
