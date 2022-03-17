@@ -9,8 +9,7 @@ import com.project.cruit.domain.notification.QuestionNotification;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.dto.SimpleMessageBody;
-import com.project.cruit.exception.InvalidPageOffsetException;
+import com.project.cruit.dto.SearchUserDto;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.service.NotificationService;
 import com.project.cruit.service.S3UploaderService;
@@ -20,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -47,26 +45,16 @@ public class UserApiController {
     private final S3UploaderService s3UploaderService;
 
     @GetMapping("")
-    public PageWrapper<SearchUserResponse> searchUsers(@RequestParam(name = "q", defaultValue = "") String stackFilter,
-                                                                          @RequestParam(name="page", defaultValue = "0") int page,
-                                                                          @RequestParam(name = "limit", defaultValue = "12") int limit,
-                                                       @RequestParam(name="leader", defaultValue = "all") String leaderFilter) {
-        Page<User> users;
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id"));
-        if (stackFilter.isBlank()) {
-            // 굳이 조인할 필요 없으니 if문으로 분기
-            users =userService.findByNoStackFilter(pageRequest, leaderFilter);
-        } else {
-            List<String> stackFilterList = List.of(stackFilter.split(";"));
-            users = userService.findByStackFilter(stackFilterList, leaderFilter, pageRequest);
-        }
-        // page offset이 너무 크면 에러
-        if (users.getTotalPages() != 0 && users.getTotalPages() <= page) {
-            throw new InvalidPageOffsetException();
-        }
+    public PageWrapper<List<SearchUserDto>> searchUsers(@RequestParam(name = "q", defaultValue = "") String stackFilter,
+                                                  @RequestParam(name="page", defaultValue = "0") int page,
+                                                  @RequestParam(name = "limit", defaultValue = "12") int limit,
+                                                  @RequestParam(name="leader", defaultValue = "all") String leaderFilter) {
 
-        List<SearchUserResponse> responses = users.stream().map(SearchUserResponse::new).collect(Collectors.toList());
-        return new PageWrapper(responses, users.hasPrevious(), users.hasNext(), users.getTotalPages(), users.getNumber());
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id"));
+        Page<User> users = userService.findPageByStackAndLeader(pageRequest, stackFilter, leaderFilter, page);
+
+        List<SearchUserDto> responses = users.stream().map(SearchUserDto::new).collect(Collectors.toList());
+        return new PageWrapper<>(responses, users.hasPrevious(), users.hasNext(), users.getTotalPages(), users.getNumber());
     }
 
     @GetMapping("/{userId}")
@@ -345,30 +333,7 @@ public class UserApiController {
         private String github;
     }
 
-    @Data
-    static class SearchUserResponse {
-        private Long id;
-        private String name;
-        private String profile;
-        private String github;
-        private String position;
-        private List<String> stacks = new ArrayList<>();
-        private Boolean canBeLeader;
 
-        public SearchUserResponse(User user) {
-            this.id = user.getId();
-            this.name = user.getName();
-            this.profile = user.getProfile();
-            this.github = user.getGithub();
-            this.position = user.getPosition().name();
-            this.canBeLeader = user.getCanBeLeader();
-
-            List<UserStack> userStacks = user.getUserStacks();
-            for (UserStack userStack : userStacks) {
-                stacks.add(userStack.getStack().getImage());
-            }
-        }
-    }
 
     @Data
     static class StackImage {
