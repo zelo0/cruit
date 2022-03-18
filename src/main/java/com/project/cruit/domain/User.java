@@ -2,10 +2,7 @@ package com.project.cruit.domain;
 
 import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.proposal.Proposal;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,8 +10,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-//@Builder
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter @Setter
 public class User extends BaseTimeEntity {
     @Id
@@ -34,6 +32,7 @@ public class User extends BaseTimeEntity {
     private Position position;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<UserStack> userStacks = new ArrayList<>();
 
     private String introduction;
@@ -46,33 +45,36 @@ public class User extends BaseTimeEntity {
             joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "url")
-    private List<String> links;
+    @Builder.Default
+    private List<String> links = new ArrayList<>();
 
     private Double rating;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<UserPart> userParts = new ArrayList<>();
 
     @OneToMany(mappedBy = "questioner")
+    @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
     private Boolean canBeLeader;
 
     @OneToMany(mappedBy = "proposer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Project> proposedProjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Proposal> sentProposals = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Proposal> receivedProposals = new ArrayList<>();
 
     @OneToMany(mappedBy = "subject")
+    @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
-
-    public User() {
-    }
-
 
     public User(String email, String password, String name, String position) {
         this.email = email;
