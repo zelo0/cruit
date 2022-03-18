@@ -4,6 +4,7 @@ import com.project.cruit.domain.Position;
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserStack;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.JoinRequestDto;
 import com.project.cruit.exception.EmailExistsException;
 import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NameExistsException;
@@ -28,16 +29,34 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Long join(User user) {
-        if (checkDuplicateEmail(user.getEmail())) {
+    public User join(JoinRequestDto joinRequest) {
+        if (checkDuplicateEmail(joinRequest.getEmail())) {
             throw new EmailExistsException();
         }
-        if (checkDuplicateName(user.getName())) {
+        if (checkDuplicateName(joinRequest.getName())) {
             throw new NameExistsException();
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user).getId();
+        Position position = null;
+        switch (joinRequest.getPosition()) {
+            case "FRONTEND":
+                position = Position.FRONTEND;
+                break;
+            case "BACKEND":
+                position = Position.BACKEND;
+                break;
+            case "DESIGN":
+                position = Position.DESIGN;
+                break;
+        }
+
+        User user = User.builder()
+                .email(joinRequest.getEmail())
+                .password(passwordEncoder.encode(joinRequest.getPassword()))
+                .name(joinRequest.getName())
+                .position(position)
+                .build();
+        return userRepository.save(user);
     }
 
     public User findById(Long id) {

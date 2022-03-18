@@ -7,6 +7,7 @@ import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.notification.ProposalNotification;
 import com.project.cruit.domain.notification.QuestionNotification;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.JoinRequestDto;
 import com.project.cruit.dto.PageWrapper;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.dto.SearchUserDto;
@@ -105,9 +106,9 @@ public class UserApiController {
 
 
     @PostMapping("")
-    public ResponseWrapper<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest request) {
-        User user = new User(request.getEmail(), request.getPassword(), request.getName(), request.getPosition());
-        return new ResponseWrapper<>(new CreateUserResponse(userService.join(user)));
+    public ResponseWrapper<CreateUserResponse> createUser(@RequestBody @Valid JoinRequestDto request) {
+        User user = userService.join(request);
+        return new ResponseWrapper<>(new CreateUserResponse(user.getId()));
     }
 
     @PatchMapping("/me/profile")
@@ -179,30 +180,7 @@ public class UserApiController {
         return new ResponseWrapper<>(new SetMyGithubResponse(changedGithub));
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class CreateUserRequest {
-        @NotEmpty
-        @Email(message = "유효한 이메일이 아닙니다")
-        private String email;
 
-        @NotEmpty
-        @Size(min = 8, max = 30, message = "비밀번호는 8자 이상 30자 이하여야 합니다")
-        private String password;
-
-        @NotEmpty
-        @Size(max = 30, message = "이름은 1글자 이상 30자 이하여야 합니다")
-        private String name;
-
-        @NotEmpty
-        @Pattern(regexp = "FRONTEND|BACKEND|DESIGN") // 정해진 값이 맞는 지 확인
-        private String position;
-
-//        public User toUser() {
-//            return new User(this.getEmail(), this.getPassword(), this.getName(), this.getPosition());
-//        }
-    }
 
     @Data
     @AllArgsConstructor
