@@ -29,9 +29,7 @@ class ProjectServiceTest {
         doReturn(0L).when(projectRepository).isMemberInLong(projectId, userId);
 
         // when
-        RuntimeException exception = assertThrows(NotPermitException.class, () -> {
-            projectService.checkIsMember(projectId, userId);
-        });
+        RuntimeException exception = assertThrows(NotPermitException.class, () -> projectService.checkIsMember(projectId, userId));
 
         // then
     }
