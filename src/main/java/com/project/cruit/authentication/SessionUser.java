@@ -1,6 +1,7 @@
 package com.project.cruit.authentication;
 
 import com.project.cruit.domain.User;
+import com.project.cruit.exception.NotHaveSessionException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,12 @@ public class SessionUser implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public void checkIsNull() {
+        if (this == null) {
+            throw new NotHaveSessionException();
+        }
     }
 
     @Override

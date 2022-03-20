@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -66,9 +68,8 @@ public class UserApiController {
 
     @GetMapping("/me")
     public ResponseWrapper<GetMeResponse> getMe(@CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         User me = userService.findById(sessionUser.getId());
         return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition().name())));
@@ -76,10 +77,10 @@ public class UserApiController {
 
     @GetMapping("/me/head")
     public ResponseWrapper<GetMyHeadResponse> getMyHead(@CurrentUser SessionUser sessionUser) {
+        log.info("header에서 데이터 요청");
         // session이 없으면 빈 문자열 반환
-        if (sessionUser == null) {
-            return new ResponseWrapper<>(new GetMyHeadResponse("",  "",0, new ArrayList<>()));
-        }
+        sessionUser.checkIsNull();
+
 
         // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제 -  쿼리 필요
         User user = userService.findById(sessionUser.getId());
@@ -113,9 +114,8 @@ public class UserApiController {
 
     @PatchMapping("/me/profile")
     public ResponseWrapper setMyProfile(@RequestPart("file") MultipartFile file, @CurrentUser SessionUser sessionUser) throws IOException {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         // s3에 업로드
         String fileUrl = s3UploaderService.upload(file, "profiles");
@@ -126,18 +126,16 @@ public class UserApiController {
 
     @PatchMapping("/me/name")
     public ResponseWrapper<SetMyNameResponse> setMyName(@RequestBody @Valid SetMyNameRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         String changedName = userService.setName(sessionUser.getId(), request.getName());
         return new ResponseWrapper<>(new SetMyNameResponse(changedName));
     }
 
     @PatchMapping("/me/position")
     public ResponseWrapper<SetMyPositionResponse> setMyPosition(@RequestBody @Valid SetMyPositionRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         Position changedPosition = userService.setPosition(sessionUser.getId(), request.getPosition());
         List<? extends Stack> selectableStacks = stackService.findAllByPosition(changedPosition.name());
         return new ResponseWrapper<>(new SetMyPositionResponse(changedPosition.name(), (List<Stack>) selectableStacks));
@@ -145,9 +143,8 @@ public class UserApiController {
 
     @PatchMapping("/me/canBeLeader")
     public ResponseWrapper<SetMyCanBeLeaderResponse> setMyCanBeLeader(@RequestBody @Valid SetMyCanBeLeaderRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         System.out.println("request.getCanBeLeader() = " + request.getCanBeLeader());
         Boolean changedCanBeLeader = userService.setCanBeLeader(sessionUser.getId(), request.getCanBeLeader());
         return new ResponseWrapper<>(new SetMyCanBeLeaderResponse(changedCanBeLeader));
@@ -155,27 +152,24 @@ public class UserApiController {
 
     @PatchMapping("/me/stacks")
     public ResponseWrapper<SetMyStacksResponse> setMyStacks(@RequestBody @Valid SetMyStacksRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         List<Stack> changedStacks = userService.setUserStacks(sessionUser.getId(), request.getStacks());
         return new ResponseWrapper<>(new SetMyStacksResponse(changedStacks));
     }
 
     @PatchMapping("/me/introduction")
     public ResponseWrapper<SetMyIntroductionResponse> setMyIntroduction(@RequestBody @Valid SetMyIntroductionRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         String changedIntroduction = userService.setIntroduction(sessionUser.getId(), request.getIntroduction());
         return new ResponseWrapper<>(new SetMyIntroductionResponse(changedIntroduction));
     }
 
     @PatchMapping("/me/github")
     public ResponseWrapper<SetMyGithubResponse> setMyGithub(@RequestBody @Valid SetMyGithubRequest request, @CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
         String changedGithub = userService.setGithub(sessionUser.getId(), request.getGithub());
         return new ResponseWrapper<>(new SetMyGithubResponse(changedGithub));
     }

@@ -54,9 +54,8 @@ public class PartApiController {
 
     /* 수정 권한이 있는 사용자인지 체크하는 함수 */
     private void checkModifyingAuthority(SessionUser sessionUser, Part part) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         // 해당 project의 proposer도 해당 part의 리더도 아니면 권한 X
         List<UserPart> userParts = part.getUserParts();
@@ -78,9 +77,8 @@ public class PartApiController {
 
     @GetMapping("/involved/{position}")
     public ResponseWrapper getInvolvedParts(@CurrentUser SessionUser sessionUser, @PathVariable String position) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         User targetUser = userService.findById(sessionUser.getId());
 

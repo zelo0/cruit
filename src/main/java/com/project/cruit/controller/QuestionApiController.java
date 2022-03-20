@@ -36,9 +36,7 @@ public class QuestionApiController {
     // 질문 등록
     @PostMapping("")
     public ResponseWrapper createQuestion(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateQuestionRequest request) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
 
         Question question = new Question(userService.findById(sessionUser.getId()), request.getContent(),
                 projectService.findById(request.getProjectId()), null);
@@ -49,9 +47,7 @@ public class QuestionApiController {
     // 질문의 질문 등록
     @PostMapping("/sub")
     public ResponseWrapper createSubQuestion(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateSubQuestionRequest request) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
 
         Question parentQuestion = questionService.findById(request.getParentId());
         Question question = new Question(userService.findById(sessionUser.getId()), request.getContent(),
@@ -64,9 +60,8 @@ public class QuestionApiController {
     // 질문 수정
     @PatchMapping("/{questionId}")
     public ResponseWrapper modifyQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId, @RequestBody @Valid ModifyQuestionRequest request) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         // 본인의 질문인지 확인
         Question question = questionService.findById(questionId);
@@ -81,9 +76,8 @@ public class QuestionApiController {
     // 질문 삭제
     @DeleteMapping("/{questionId}")
     public ResponseWrapper deleteQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         // 본인의 질문인지 확인
         Question question = questionService.findById(questionId);

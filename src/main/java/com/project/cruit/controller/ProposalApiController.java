@@ -38,9 +38,8 @@ public class ProposalApiController {
 
     @GetMapping("/me")
     public ResponseWrapper getProposalsInvolvedMe(@CurrentUser SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
+
 
         List<Proposal> sentProposals = proposalService.getSentProposalsOfUser(sessionUser.getId());
         List<Proposal> receivedProposals = proposalService.getReceivedProposalsOfUser(sessionUser.getId());
@@ -50,9 +49,7 @@ public class ProposalApiController {
     // 프로젝트 관계자가 유저에게 보내는 프로젝트 함께하자는 요청
     @PostMapping("")
     public ResponseWrapper createProposalToUser(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToUserRequest request) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
 
         // 이 파트에 대한 제안을 보낼 수 있는 자격이 있는 지 확인 필요
 
@@ -68,9 +65,7 @@ public class ProposalApiController {
     // 유저가 프로젝트 관계자에게 보내는 프로젝트에 참여하고 싶다는 요청
     @PostMapping("/project")
     public ResponseWrapper createProposalToProject(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToProjectRequest request) {
-        if (sessionUser == null) {
-            throw new NotHaveSessionException();
-        }
+        sessionUser.checkIsNull();
 
 
         User sender = userService.findById(sessionUser.getId());
