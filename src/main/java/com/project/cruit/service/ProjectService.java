@@ -1,5 +1,6 @@
 package com.project.cruit.service;
 
+import com.project.cruit.domain.Board;
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserPart;
 import com.project.cruit.domain.part.BackendPart;
@@ -8,6 +9,7 @@ import com.project.cruit.domain.part.FrontendPart;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.Project;
 import com.project.cruit.domain.status.ProjectStatus;
+import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -82,7 +84,7 @@ public class ProjectService {
     @Transactional
     public void modifyStatus(Long id, String status) {
         Project project = projectRepository.findById(id).get();
-        if (status == "PUBLIC") {
+        if (status.equals("PUBLIC")) {
             project.setStatus(ProjectStatus.PUBLIC);
         } else {
             project.setStatus(ProjectStatus.PRIVATE);
@@ -93,5 +95,17 @@ public class ProjectService {
         User user = userService.findById(userId);
         List<UserPart> userParts = userPartService.findAllByUser(user);
         return userParts.stream().map(userPart -> userPart.getPart().getProject()).collect(Collectors.toList());
+    }
+
+    public void checkIsMember(Long projectId, Long userId) {
+        Long isMemberInLong =  projectRepository.isMemberInLong(projectId, userId);
+        if (isMemberInLong < 1L) {
+            throw new NotPermitException();
+        }
+    }
+
+    public List<Board> getBoards(Long projectId) {
+        Project project = findById(projectId);
+        return project.getBoards();
     }
 }
