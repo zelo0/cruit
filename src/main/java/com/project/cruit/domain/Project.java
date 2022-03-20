@@ -27,7 +27,7 @@ public class Project extends BaseTimeEntity {
 
     private String name;
 
-    @Lob
+    @Column(length = 10000)
     private String description;
 
     @Enumerated(EnumType.STRING)

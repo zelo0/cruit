@@ -35,8 +35,11 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private List<UserStack> userStacks = new ArrayList<>();
 
+    @Column(length = 10000)
     private String introduction;
+
     private String profile;
+
     private String github;
 
     @ElementCollection
@@ -105,4 +108,5 @@ public class User extends BaseTimeEntity {
     public int hashCode() {
         return Objects.hash(getEmail(), getName());
     }
+
 }
