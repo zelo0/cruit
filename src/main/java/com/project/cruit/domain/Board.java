@@ -7,7 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Board {
     @Id
@@ -17,7 +19,7 @@ public class Board {
 
     private String title;
 
-    @Lob
+    @Column(length = 10000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

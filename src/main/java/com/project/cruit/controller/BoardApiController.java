@@ -2,9 +2,8 @@ package com.project.cruit.controller;
 
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
-import com.project.cruit.dto.CreateBoardRequest;
-import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.dto.SimpleMessageBody;
+import com.project.cruit.domain.Board;
+import com.project.cruit.dto.*;
 import com.project.cruit.service.BoardService;
 import com.project.cruit.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +26,25 @@ public class BoardApiController {
         return new ResponseWrapper<>(new SimpleMessageBody("게시물 작성 성공"));
     }
 
+    @GetMapping("/{boardId}")
+    public ResponseWrapper<BoardContentDto> getBoardContent(@PathVariable Long boardId) {
+        Board board = boardService.findById(boardId);
+        return new ResponseWrapper<>(new BoardContentDto(board));
+    }
 
+    @PatchMapping("/{boardId}")
+    public ResponseWrapper<SimpleMessageBody> modifyBoard(@RequestBody @Valid ModifyBoardRequest request, @PathVariable Long boardId, @CurrentUser SessionUser sessionUser) {
+        sessionUser.checkIsNull();
+        boardService.checkIsAuthor(boardId, sessionUser.getId());
+        boardService.modifyBoard(boardId, request);
+        return new ResponseWrapper<>(new SimpleMessageBody("게시물 수정 성공"));
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseWrapper<SimpleMessageBody> deleteBoard(@PathVariable Long boardId, @CurrentUser SessionUser sessionUser) {
+        sessionUser.checkIsNull();
+        boardService.checkIsAuthor(boardId, sessionUser.getId());
+        boardService.deleteBoard(boardId);
+        return new ResponseWrapper<>(new SimpleMessageBody("게시물 삭제 성공"));
+    }
 }

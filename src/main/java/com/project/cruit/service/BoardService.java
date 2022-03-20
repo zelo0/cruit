@@ -4,6 +4,8 @@ import com.project.cruit.domain.Board;
 import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
 import com.project.cruit.dto.CreateBoardRequest;
+import com.project.cruit.dto.ModifyBoardRequest;
+import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,4 +36,29 @@ public class BoardService {
     }
 
 
+    public void checkIsAuthor(Long boardId, Long userId) {
+        Board board = boardRepository.findById(boardId).get();
+        Long writerId = board.getWriter().getId();
+        if (!userId.equals(writerId)) {
+            throw new NotHaveSessionException();
+        }
+    }
+
+    @Transactional
+    public Board modifyBoard(Long boardId, ModifyBoardRequest request) {
+        Board board = boardRepository.findById(boardId).get();
+        board.setContent(request.getContent());
+        board.setTitle(request.getTitle());
+        return board;
+    }
+
+    @Transactional
+    public void deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).get();
+        boardRepository.delete(board);
+    }
+
+    public Board findById(Long boardId) {
+        return boardRepository.findById(boardId).get();
+    }
 }
