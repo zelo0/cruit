@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component // 초기화 안 하기 위해 주석 처리
+//@Component // 초기화 안 하기 위해 주석 처리
 @RequiredArgsConstructor
 @Transactional
 public class InitService {

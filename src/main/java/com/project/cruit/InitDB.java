@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Component // db 초기화 안 해주기 위해 주석 처리
+//@Component // db 초기화 안 해주기 위해 주석 처리
 @RequiredArgsConstructor
 public class InitDB {
     private final InitStackDB initStackDB;
