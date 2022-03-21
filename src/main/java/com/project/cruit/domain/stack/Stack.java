@@ -6,6 +6,7 @@ import com.project.cruit.domain.UserStack;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,11 +28,11 @@ public class Stack {
 
     @OneToMany(mappedBy = "stack")
     @JsonIgnore
-    private List<UserStack> userStacks;
+    private List<UserStack> userStacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "stack")
     @JsonIgnore
-    private List<PartStack> partStacks;
+    private List<PartStack> partStacks = new ArrayList<>();
 
     public Stack(String name, String image) {
         this.name = name;

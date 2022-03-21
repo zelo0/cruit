@@ -41,7 +41,7 @@ public class Question extends BaseTimeEntity{
     private Question parent;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionNotification> notifications;
+    private List<QuestionNotification> notifications = new ArrayList<>();
 
     public Question(User questioner, String content, Project project, Question parent) {
         this.questioner = questioner;
