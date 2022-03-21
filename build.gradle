@@ -39,6 +39,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+bootJar{
+	archivesBaseName = 'cruit-1.0'
+	archiveFileName = 'cruit-1.0.jar'
+	archiveVersion = "1.0.0"
+}
+
 
 test {
 	useJUnitPlatform()
