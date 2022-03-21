@@ -27,6 +27,8 @@ dependencies {
 	implementation 'com.google.code.gson:gson'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	// mariadb connector
+	implementation("org.mariadb.jdbc:mariadb-java-client:2.1.2")
 	// thumbnailator
 	implementation 'net.coobird:thumbnailator:0.4.8'
 	implementation 'org.imgscalr:imgscalr-lib:4.2'
