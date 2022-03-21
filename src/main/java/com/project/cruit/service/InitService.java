@@ -1,6 +1,6 @@
 package com.project.cruit.service;
 
-import com.project.cruit.domain.PartStatus;
+import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserStack;
@@ -8,6 +8,7 @@ import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.BackendStack;
 import com.project.cruit.domain.stack.FrontendStack;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.JoinRequestDto;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component // 초기화 안 하기 위해 주석 처리
+@Component // 초기화 안 하기 위해 주석 처리
 @RequiredArgsConstructor
 @Transactional
 public class InitService {
@@ -33,7 +34,7 @@ public class InitService {
         // frontend
         Stack react = new FrontendStack("react", "https://w7.pngwing.com/pngs/452/495/png-transparent-react-javascript-angularjs-ionic-github-text-logo-symmetry-thumbnail.png");
         stacks.add(react);
-        Stack vue = new FrontendStack("vue.js", "https://w7.pngwing.com/pngs/595/279/png-transparent-vue-js-javascript-library-angularjs-react-vue-js-template-angle-text-thumbnail.png");
+        Stack vue = new FrontendStack("vue", "https://w7.pngwing.com/pngs/595/279/png-transparent-vue-js-javascript-library-angularjs-react-vue-js-template-angle-text-thumbnail.png");
         stacks.add(vue);
 
         // backend
@@ -47,8 +48,8 @@ public class InitService {
         stacks.add(flask);
         Stack node = new BackendStack("node.js", "https://w7.pngwing.com/pngs/416/280/png-transparent-node-js-express-js-javascript-redis-mean-node-js-angle-text-service-thumbnail.png");
         stacks.add(node);
-        Stack rubyRails = new BackendStack("ruby on rails", "https://w7.pngwing.com/pngs/782/228/png-transparent-ruby-on-rails-rubygems-amazon-dynamodb-ruby-text-logo-ruby-thumbnail.png");
-        stacks.add(rubyRails);
+//        Stack rubyRails = new BackendStack("ruby on rails", "https://w7.pngwing.com/pngs/782/228/png-transparent-ruby-on-rails-rubygems-amazon-dynamodb-ruby-text-logo-ruby-thumbnail.png");
+//        stacks.add(rubyRails);
 
         stackService.saveStacks(stacks);
     }
@@ -60,8 +61,8 @@ public class InitService {
 
     public void sampleProject() {
 
-        User user1 = new User("a@gmail.com", "12345678", "(테스트) 주니어 백엔드", "BACKEND");
-        userService.join(user1);
+        JoinRequestDto req1 = new JoinRequestDto("a@gmail.com", "12345678", "(테스트) 주니어 백엔드", "BACKEND");
+        User user1 = userService.join(req1);
         user1.setProfile("https://w7.pngwing.com/pngs/193/722/png-transparent-red-and-blue-spider-man-illustration-spider-man-miles-morales-marvel-comics-spider-man-heroes-superhero-fictional-character-thumbnail.png");
         userRepository.save(user1);
 
@@ -70,12 +71,12 @@ public class InitService {
         user1.getUserStacks().add(spring);
         user1.getUserStacks().add(django);
 
-        User user2 = new User("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", "BACKEND");
-        userService.join(user2);
+        JoinRequestDto req2 = new JoinRequestDto("test2@gmail.com", "1234", "(테스트) 시니어 백엔드", "BACKEND");
+        User user2 = userService.join(req2);
         user2.setProfile("https://w7.pngwing.com/pngs/549/240/png-transparent-marvel-iron-man-iron-man-hulk-spider-man-ultron-ironman-avengers-heroes-superhero-thumbnail.png");
         userRepository.save(user2);
-        User user3 = new User("test3@gmail.com", "1234", "(테스트) 리액트 개발자", "FRONTEND");
-        userService.join(user3);
+        JoinRequestDto req3 = new JoinRequestDto("test3@gmail.com", "1234", "(테스트) 리액트 개발자", "FRONTEND");
+        User user3 = userService.join(req3);
         user3.setProfile("https://w7.pngwing.com/pngs/732/154/png-transparent-pokemon-meowth-whiskers-meowth-pokemon-go-ash-ketchum-pokemon-go-mammal-cat-like-mammal-carnivoran-thumbnail.png");
         userRepository.save(user3);
 

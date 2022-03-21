@@ -1,7 +1,6 @@
 package com.project.cruit.controller;
 
 import com.google.gson.Gson;
-import com.project.cruit.controller.UserApiController.CreateUserRequest;
 import com.project.cruit.domain.Position;
 import com.project.cruit.domain.User;
 import com.project.cruit.dto.PageWrapper;
