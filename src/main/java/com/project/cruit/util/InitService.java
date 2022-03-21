@@ -1,4 +1,4 @@
-package com.project.cruit.service;
+package com.project.cruit.util;
 
 import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.domain.Project;
@@ -10,6 +10,10 @@ import com.project.cruit.domain.stack.FrontendStack;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.dto.JoinRequestDto;
 import com.project.cruit.repository.UserRepository;
+import com.project.cruit.service.PartService;
+import com.project.cruit.service.ProjectService;
+import com.project.cruit.service.StackService;
+import com.project.cruit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
