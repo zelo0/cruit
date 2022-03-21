@@ -39,12 +39,7 @@ class UserServiceTest {
 
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         String encryptedPw = encoder.encode(joinRequest.getPassword());
-        doReturn(User.builder()
-                .email(joinRequest.getEmail())
-                .password(encryptedPw)
-                .name(joinRequest.getName())
-                .position(Position.FRONTEND)
-                .build()).when(userRepository).save(any(User.class));
+        doReturn(new User(joinRequest.getEmail(), encryptedPw, joinRequest.getName(), Position.FRONTEND.name())).when(userRepository).save(any(User.class));
         
         // when
         User joinedUser = userService.join(joinRequest);

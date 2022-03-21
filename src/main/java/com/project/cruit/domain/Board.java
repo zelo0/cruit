@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +30,13 @@ public class Board {
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private Project project;
+
+    public Board(String title, String content, Project project, User writer) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+        this.project = project;
+    }
+
 }

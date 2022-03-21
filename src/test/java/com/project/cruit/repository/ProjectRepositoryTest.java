@@ -46,11 +46,6 @@ class ProjectRepositoryTest {
     }
 
     private User user() {
-        return User.builder()
-                .name("test")
-                .email("test@g.com")
-                .password("test")
-                .position(Position.FRONTEND)
-                .build();
+        return new User("test", "test@g.com", "test", Position.FRONTEND.name());
     }
 }

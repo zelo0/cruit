@@ -26,12 +26,7 @@ public class BoardService {
     public void save(CreateBoardRequest request, Long userId) {
         Project project = projectService.findById(request.getProjectId());
         User user = userService.findById(userId);
-        Board board = Board.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .project(project)
-                .writer(user)
-                .build();
+        Board board = new Board(request.getTitle(), request.getContent(), project, user);
         boardRepository.save(board);
     }
 

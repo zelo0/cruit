@@ -10,6 +10,7 @@ import com.project.cruit.exception.InvalidPageOffsetException;
 import com.project.cruit.exception.NameExistsException;
 import com.project.cruit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -50,12 +52,7 @@ public class UserService {
                 break;
         }
 
-        User user = User.builder()
-                .email(joinRequest.getEmail())
-                .password(passwordEncoder.encode(joinRequest.getPassword()))
-                .name(joinRequest.getName())
-                .position(position)
-                .build();
+        User user = new User(joinRequest.getEmail(), passwordEncoder.encode(joinRequest.getPassword()), joinRequest.getName(), position.name());
         return userRepository.save(user);
     }
 
@@ -174,10 +171,8 @@ public class UserService {
             users = findByStackFilter(stackFilterList, leaderFilter, pageRequest);
         }
 
-        System.out.println("users = " + users.getContent());
-
         // page offset이 너무 크면 에러
-        if (users.getTotalPages() != 0 && users.getTotalPages() <= page) {
+        if ((users.getTotalPages() != 0 && users.getTotalPages() <= page) || (users.getTotalPages() == 0 && page > 0)) {
             throw new InvalidPageOffsetException();
         }
 
