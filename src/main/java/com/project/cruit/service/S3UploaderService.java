@@ -26,8 +26,7 @@ public class S3UploaderService {
     public String upload(MultipartFile file, String dirName) throws IOException{
         String storedFilePath = dirName + "/" + UUID.randomUUID() + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        ByteArrayInputStream resizedStream = imageResizeService.resizeImage(file, 50, 50);
+        ByteArrayInputStream resizedStream = imageResizeService.resizeImage(file, 200, 200);
         amazonS3Client.putObject(bucket, storedFilePath, resizedStream, metadata);
         return amazonS3Client.getUrl(bucket, storedFilePath).toString();
     }
