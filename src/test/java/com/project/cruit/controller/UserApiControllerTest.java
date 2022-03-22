@@ -1,6 +1,7 @@
 package com.project.cruit.controller;
 
 import com.google.gson.Gson;
+import com.project.cruit.authentication.AuthenticationFilter;
 import com.project.cruit.domain.Position;
 import com.project.cruit.domain.User;
 import com.project.cruit.dto.PageWrapper;
@@ -22,10 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +75,31 @@ class UserApiControllerTest {
         PageWrapper<List<SearchUserDto>> response = gson.fromJson(mvcResult.getResponse().getContentAsString(), PageWrapper.class);
         assertThat(response.getData().size()).isEqualTo(5);
     }
+
+    @Test
+    @DisplayName("없는 이메일을 context로 넘길 시 error throw")
+    void throwError_whenEmailDoesNtExist() throws Exception {
+        // given
+        String requestJson = "{ email: 'test@test.com', password: 'test'}";
+
+        // when
+        ResultActions result = mvc.perform(post("/api/v1/login").contentType(MediaType.APPLICATION_JSON).content(requestJson));
+
+        // then
+        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("로그인 정보가 일치하지 않습니다"));
+    }
+
+
+    private class LoginRequestBody {
+        private String email;
+        private String password;
+
+        public LoginRequestBody(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+    }
+
 
     // postman으로 테스트하면 이상 없음
 //    @Test
@@ -156,6 +184,6 @@ class UserApiControllerTest {
 //                .andExpect(status().is(400))
 //                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다"));
 //    }
-    
+
 //    사용자 기술 스택 변경할 때 기존 데이터 테이블에서 제거되는지 확인하는 테스트
 }
