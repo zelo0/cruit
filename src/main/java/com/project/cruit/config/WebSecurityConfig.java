@@ -1,9 +1,6 @@
 package com.project.cruit.config;
 
-import com.project.cruit.authentication.AuthenticationFailureHandlerImpl;
-import com.project.cruit.authentication.AuthenticationFilter;
-import com.project.cruit.authentication.AuthenticationSuccessHandlerImpl;
-import com.project.cruit.authentication.LogoutSuccesshandlerImpl;
+import com.project.cruit.authentication.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -71,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cruits.vercel.app/"));
         configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 
