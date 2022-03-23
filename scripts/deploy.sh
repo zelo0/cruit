@@ -6,4 +6,4 @@ sudo docker pull lonelylee/cruit:1.0
 
 docker run -d -p 8080:8080 -v /home/ec2-user:/config --name cruit lonelylee/cruit:1.0
 
-docker rmi -f $(docker image -f "dangling=true" -q) || true
+docker rmi -f $(docker images -f "dangling=true" -q) || true
