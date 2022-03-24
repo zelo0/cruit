@@ -1,6 +1,8 @@
 package com.project.cruit.util;
 
+import com.project.cruit.CommonVariables;
 import com.project.cruit.domain.stack.BackendStack;
+import com.project.cruit.domain.stack.DesignStack;
 import com.project.cruit.domain.stack.FrontendStack;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.repository.UserRepository;
@@ -26,22 +28,24 @@ public class InitStackDB {
         List<Stack> stacks = new ArrayList<>();
 
         // frontend
-        Stack react = new FrontendStack("react", "https://w7.pngwing.com/pngs/452/495/png-transparent-react-javascript-angularjs-ionic-github-text-logo-symmetry-thumbnail.png");
+        Stack react = new FrontendStack("react", CommonVariables.awsS3UrlPrefix + "/techStacks/react.png");
         stacks.add(react);
-        Stack vue = new FrontendStack("vue", "https://w7.pngwing.com/pngs/595/279/png-transparent-vue-js-javascript-library-angularjs-react-vue-js-template-angle-text-thumbnail.png");
+        Stack vue = new FrontendStack("vue", CommonVariables.awsS3UrlPrefix + "/techStacks/vue.png");
         stacks.add(vue);
 
         // backend
-        Stack spring = new BackendStack("spring", "https://w7.pngwing.com/pngs/713/936/png-transparent-spring-framework-representational-state-transfer-java-api-for-restful-web-services-microservices-others-text-trademark-logo-thumbnail.png");
+        Stack spring = new BackendStack("spring", CommonVariables.awsS3UrlPrefix + "/techStacks/spring.png");
         stacks.add(spring);
-        Stack hibernate = new BackendStack("hibernate", "https://w7.pngwing.com/pngs/709/504/png-transparent-hibernate-spring-framework-java-persistence-api-java-annotation-others-text-logo-map-thumbnail.png");
-        stacks.add(hibernate);
-        Stack django = new BackendStack("django", "https://w7.pngwing.com/pngs/159/366/png-transparent-django-python-computer-icons-logo-python-text-label-rectangle-thumbnail.png");
+        Stack django = new BackendStack("django", CommonVariables.awsS3UrlPrefix + "/techStacks/django.png");
         stacks.add(django);
-        Stack flask = new BackendStack("flask", "https://w7.pngwing.com/pngs/166/342/png-transparent-flask-python-bottle-web-framework-web-application-flask-white-monochrome-shoe-thumbnail.png");
+        Stack flask = new BackendStack("flask", CommonVariables.awsS3UrlPrefix + "/techStacks/flask.png");
         stacks.add(flask);
-        Stack node = new BackendStack("node.js", "https://w7.pngwing.com/pngs/416/280/png-transparent-node-js-express-js-javascript-redis-mean-node-js-angle-text-service-thumbnail.png");
-        stacks.add(node);
+        Stack express = new BackendStack("express", CommonVariables.awsS3UrlPrefix + "/techStacks/express.png");
+        stacks.add(express);
+
+        // design
+        Stack figma = new DesignStack("figma", CommonVariables.awsS3UrlPrefix + "/techStacks/figma.png");
+        stacks.add(figma);
 
         stackService.saveStacks(stacks);
     }
