@@ -1,6 +1,7 @@
 package com.project.cruit.service;
 
 import com.project.cruit.domain.Position;
+import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserStack;
 import com.project.cruit.domain.stack.Stack;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -177,5 +177,9 @@ public class UserService {
         }
 
         return users;
+    }
+
+    public List<Project> findPublicProjectsInvolved(User user) {
+        return userRepository.findAllPublicProjectsInvolved(user);
     }
 }

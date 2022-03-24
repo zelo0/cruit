@@ -1,5 +1,6 @@
 package com.project.cruit.repository;
 
+import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByStackFilterAndCanBeLeader(@Param("stackFilterList") List<String> stackFilterList, @Param("leaderFilter") boolean leaderFilter, Pageable pageable);
 
     User findByName(String name);
+
+    @Query("select p from Project p join p.parts pa join pa.userParts up join up.user u where u = :user and p.status = 'PUBLIC'")
+    List<Project> findAllPublicProjectsInvolved(@Param("user") User user);
 }
