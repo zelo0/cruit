@@ -1,5 +1,6 @@
 package com.project.cruit.domain;
 
+import com.project.cruit.CommonVariables;
 import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.proposal.Proposal;
 import lombok.*;
@@ -14,8 +15,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter @Setter
 public class User extends BaseTimeEntity {
-    private static final String defaultProfile = "https://cruit.s3.ap-northeast-2.amazonaws.com/profiles/default.png";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -38,7 +37,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 10000)
     private String introduction;
 
-    private String profile = defaultProfile;
+    private String profile = CommonVariables.awsS3UrlPrefix + "/profiles/default.png";
 
     private String github;
 
