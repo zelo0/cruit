@@ -7,11 +7,7 @@ import com.project.cruit.domain.notification.Notification;
 import com.project.cruit.domain.notification.ProposalNotification;
 import com.project.cruit.domain.notification.QuestionNotification;
 import com.project.cruit.domain.stack.Stack;
-import com.project.cruit.dto.JoinRequestDto;
-import com.project.cruit.dto.PageWrapper;
-import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.dto.SearchUserDto;
-import com.project.cruit.exception.NotHaveSessionException;
+import com.project.cruit.dto.*;
 import com.project.cruit.service.NotificationService;
 import com.project.cruit.service.S3UploaderService;
 import com.project.cruit.service.StackService;
@@ -28,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +56,8 @@ public class UserApiController {
     @GetMapping("/{userId}")
     public ResponseWrapper getUser(@PathVariable Long userId) {
         User targetUser = userService.findById(userId);
-        return new ResponseWrapper(new GetUserResponse(targetUser));
+        List<Project> publicProjectsInvolved = userService.findPublicProjectsInvolved(targetUser);
+        return new ResponseWrapper(new DetailUserDto(targetUser, publicProjectsInvolved));
     }
 
     @GetMapping("/me")
@@ -316,51 +310,7 @@ public class UserApiController {
         }
     }
 
-    @Data
-    static class GetUserResponse {
-        private Long id;
-        private String name;
-        private String profile;
-        private String github;
-        private Boolean canBeLeader;
-        private String position;
-        private String introduction;
-        private List<String> linkList;
-        private List<Stack> stackList = new ArrayList<>();
-        private List<SimpleProjectInfo> projectList = new ArrayList<>();
 
-        public GetUserResponse(User user) {
-            id = user.getId();
-            name = user.getName();
-            profile = user.getProfile();
-            github = user.getGithub();
-            canBeLeader = user.getCanBeLeader();
-            position = user.getPosition().name();
-            introduction = user.getIntroduction();
-            linkList = user.getLinks();
-
-            List<UserStack> userStacks = user.getUserStacks();
-            for (UserStack userStack : userStacks) {
-                stackList.add(userStack.getStack());
-            }
-
-            List<UserPart> userParts = user.getUserParts();
-            for (UserPart userPart : userParts) {
-                projectList.add(new SimpleProjectInfo(userPart.getPart().getProject()));
-            }
-        }
-    }
-
-    @Data
-    static class SimpleProjectInfo {
-        private Long id;
-        private String name;
-
-        public SimpleProjectInfo(Project project) {
-            this.id = project.getId();
-            this.name = project.getName();
-        }
-    }
 
     @Data
     @AllArgsConstructor
