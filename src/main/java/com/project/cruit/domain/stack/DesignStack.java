@@ -6,4 +6,10 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("DESIGN")
 public class DesignStack extends Stack{
+    public DesignStack(String name, String image) {
+        super(name, image);
+    }
+
+    public DesignStack() {
+    }
 }
