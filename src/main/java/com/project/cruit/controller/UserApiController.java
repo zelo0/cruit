@@ -68,11 +68,15 @@ public class UserApiController {
         return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition().name())));
     }
 
+    // head에서만은 로그인 안 돼있어도 예외 발생시키지 않기
+    // 안 그러면 메인 페이지에서 계속 로그인 페이지로 이동함
     @GetMapping("/me/head")
     public ResponseWrapper<GetMyHeadResponse> getMyHead(@CurrentUser SessionUser sessionUser) {
         log.info("header에서 데이터 요청");
         // session이 없으면 빈 문자열 반환
-        SessionUser.checkIsNull(sessionUser);
+        if (sessionUser == null) {
+            return new ResponseWrapper<>(new GetMyHeadResponse("", "", 0, new ArrayList<>()));
+        }
 
 
         // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제 -  쿼리 필요
