@@ -62,8 +62,7 @@ public class UserApiController {
 
     @GetMapping("/me")
     public ResponseWrapper<GetMeResponse> getMe(@CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
-
+        SessionUser.checkIsNull(sessionUser);
 
         User me = userService.findById(sessionUser.getId());
         return new ResponseWrapper<>(new GetMeResponse(me, stackService.findAllByPosition(me.getPosition().name())));
@@ -73,7 +72,7 @@ public class UserApiController {
     public ResponseWrapper<GetMyHeadResponse> getMyHead(@CurrentUser SessionUser sessionUser) {
         log.info("header에서 데이터 요청");
         // session이 없으면 빈 문자열 반환
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
 
         // sessionUser와 실제 데이터베이스에 있는 데이터가  sync 안 맞는 문제 -  쿼리 필요
@@ -108,7 +107,7 @@ public class UserApiController {
 
     @PatchMapping("/me/profile")
     public ResponseWrapper setMyProfile(@RequestPart("file") MultipartFile file, @CurrentUser SessionUser sessionUser) throws IOException {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
 
         // s3에 업로드
@@ -120,7 +119,7 @@ public class UserApiController {
 
     @PatchMapping("/me/name")
     public ResponseWrapper<SetMyNameResponse> setMyName(@RequestBody @Valid SetMyNameRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         String changedName = userService.setName(sessionUser.getId(), request.getName());
         return new ResponseWrapper<>(new SetMyNameResponse(changedName));
@@ -128,7 +127,7 @@ public class UserApiController {
 
     @PatchMapping("/me/position")
     public ResponseWrapper<SetMyPositionResponse> setMyPosition(@RequestBody @Valid SetMyPositionRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         Position changedPosition = userService.setPosition(sessionUser.getId(), request.getPosition());
         List<? extends Stack> selectableStacks = stackService.findAllByPosition(changedPosition.name());
@@ -137,7 +136,7 @@ public class UserApiController {
 
     @PatchMapping("/me/canBeLeader")
     public ResponseWrapper<SetMyCanBeLeaderResponse> setMyCanBeLeader(@RequestBody @Valid SetMyCanBeLeaderRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         System.out.println("request.getCanBeLeader() = " + request.getCanBeLeader());
         Boolean changedCanBeLeader = userService.setCanBeLeader(sessionUser.getId(), request.getCanBeLeader());
@@ -146,7 +145,7 @@ public class UserApiController {
 
     @PatchMapping("/me/stacks")
     public ResponseWrapper<SetMyStacksResponse> setMyStacks(@RequestBody @Valid SetMyStacksRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         List<Stack> changedStacks = userService.setUserStacks(sessionUser.getId(), request.getStacks());
         return new ResponseWrapper<>(new SetMyStacksResponse(changedStacks));
@@ -154,7 +153,7 @@ public class UserApiController {
 
     @PatchMapping("/me/introduction")
     public ResponseWrapper<SetMyIntroductionResponse> setMyIntroduction(@RequestBody @Valid SetMyIntroductionRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         String changedIntroduction = userService.setIntroduction(sessionUser.getId(), request.getIntroduction());
         return new ResponseWrapper<>(new SetMyIntroductionResponse(changedIntroduction));
@@ -162,7 +161,7 @@ public class UserApiController {
 
     @PatchMapping("/me/github")
     public ResponseWrapper<SetMyGithubResponse> setMyGithub(@RequestBody @Valid SetMyGithubRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
 
         String changedGithub = userService.setGithub(sessionUser.getId(), request.getGithub());
         return new ResponseWrapper<>(new SetMyGithubResponse(changedGithub));

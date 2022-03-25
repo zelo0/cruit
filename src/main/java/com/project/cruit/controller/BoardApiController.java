@@ -20,7 +20,7 @@ public class BoardApiController {
 
     @PostMapping("")
     public ResponseWrapper<SimpleMessageBody> createBoard(@RequestBody @Valid CreateBoardRequest request, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
         projectService.checkIsMember(request.getProjectId(), sessionUser.getId());
         boardService.save(request, sessionUser.getId());
         return new ResponseWrapper<>(new SimpleMessageBody("게시물 작성 성공"));
@@ -34,7 +34,8 @@ public class BoardApiController {
 
     @PatchMapping("/{boardId}")
     public ResponseWrapper<SimpleMessageBody> modifyBoard(@RequestBody @Valid ModifyBoardRequest request, @PathVariable Long boardId, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
         boardService.checkIsAuthor(boardId, sessionUser.getId());
         boardService.modifyBoard(boardId, request);
         return new ResponseWrapper<>(new SimpleMessageBody("게시물 수정 성공"));
@@ -42,7 +43,8 @@ public class BoardApiController {
 
     @DeleteMapping("/{boardId}")
     public ResponseWrapper<SimpleMessageBody> deleteBoard(@PathVariable Long boardId, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
         boardService.checkIsAuthor(boardId, sessionUser.getId());
         boardService.deleteBoard(boardId);
         return new ResponseWrapper<>(new SimpleMessageBody("게시물 삭제 성공"));

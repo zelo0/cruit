@@ -58,7 +58,8 @@ public class ProjectApiController {
     /* 프로젝트 제안자가 프로젝트 기본 정보 수정하려 할 때 접근 */
     @GetMapping("/simple/{projectId}")
     public ResponseWrapper getProjectSimple(@CurrentUser SessionUser sessionUser, @PathVariable Long projectId) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
 
         // 프로젝트 제안자가 아닌데 접근하려 하면 exception
@@ -73,7 +74,8 @@ public class ProjectApiController {
     // 내가 참여 중인 프로젝트 보여주기
     @GetMapping("/me")
     public ResponseWrapper getMyProjects(@CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
 
         List<Project> myProjects = projectService.findAllProjectByUserId(sessionUser.getId());
@@ -83,7 +85,8 @@ public class ProjectApiController {
 
     @PatchMapping("/text")
     public ResponseWrapper setProjectText(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectTextRequest request) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
 
         // 프로젝트 제안자가 아닌데 수정하려 하면 exception
@@ -99,7 +102,8 @@ public class ProjectApiController {
 
     @PatchMapping("/status")
     public ResponseWrapper setProjectStatus(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectStatusRequest request) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
 
         // 프로젝트 제안자가 아닌데 수정하려 하면 exception
@@ -115,7 +119,8 @@ public class ProjectApiController {
 
     @PostMapping("")
     public ResponseWrapper createProject(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateProjectRequest request) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
 
         User proposer = userService.findById(sessionUser.getId());
@@ -134,7 +139,8 @@ public class ProjectApiController {
     
     @DeleteMapping("/{projectId}")
     public ResponseWrapper deleteProject(@PathVariable Long projectId, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
 
         // 프로젝트 제안자가 아닌데 삭제하려 하면 exception
         Project targetProject = projectService.findById(projectId);
@@ -150,7 +156,8 @@ public class ProjectApiController {
 
     @GetMapping("/{projectId}/boards")
     public ResponseWrapper<GetBoardsResponseDto> getBoardsOfProject(@PathVariable Long projectId, @CurrentUser SessionUser sessionUser) {
-        sessionUser.checkIsNull();
+        SessionUser.checkIsNull(sessionUser);
+
         projectService.checkIsMember(projectId, sessionUser.getId());
         return new ResponseWrapper<>(new GetBoardsResponseDto(projectService.getBoards(projectId).stream().map(DetailBoardDto::new).collect(Collectors.toList())));
     }

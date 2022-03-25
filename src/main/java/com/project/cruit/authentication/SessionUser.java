@@ -32,8 +32,8 @@ public class SessionUser implements UserDetails {
         return id;
     }
 
-    public void checkIsNull() {
-        if (this == null) {
+    public static void checkIsNull(SessionUser sessionUser) {
+        if (sessionUser == null) {
             throw new NotHaveSessionException();
         }
     }
