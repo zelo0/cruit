@@ -48,7 +48,7 @@ public class QuestionService {
         notificationService.createQuestionNotification(question, parentQuestion.getQuestioner(), "내가 쓴 댓글에 댓글이 달렸습니다");
     }
 
-    public List<Question> findQuestionsByProjectIdAndParentExists(Project project) {
-        return questionRepository.findByProjectIdAndParentExists(project);
+    public List<Question> findQuestionsByProjectIdAndParentNonExists(Project project) {
+        return questionRepository.findQuestionsByProjectIdAndParentNonExists(project);
     }
 }
