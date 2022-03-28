@@ -133,7 +133,7 @@ public class ProjectApiController {
     public ResponseWrapper getProject(@PathVariable Long projectId) {
         Project project = projectService.findById(projectId);
         // 부모 없는 질문만 가져와야지 프로젝트의 질문을 다 가져오면 질문의 질문에도 있어서 중복 발생
-        List<Question> hierarchicalQuestions = questionService.findQuestionsByProjectIdAndParentExists(project);
+        List<Question> hierarchicalQuestions = questionService.findQuestionsByProjectIdAndParentNonExists(project);
         return new ResponseWrapper(new DetailProjectDto(project, hierarchicalQuestions));
     }
     

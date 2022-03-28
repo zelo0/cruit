@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("select q from Question q where q.project = :project and q.parent = null")
-    List<Question> findByProjectIdAndParentExists(@Param("project")Project project);
+    List<Question> findQuestionsByProjectIdAndParentNonExists(@Param("project")Project project);
 }
