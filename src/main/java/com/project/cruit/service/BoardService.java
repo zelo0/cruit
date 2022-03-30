@@ -22,12 +22,12 @@ public class BoardService {
     private final ProjectService projectService;
     private final UserService userService;
 
-
-    public void save(CreateBoardRequest request, Long userId) {
+    @Transactional
+    public Board save(CreateBoardRequest request, Long userId) {
         Project project = projectService.findById(request.getProjectId());
         User user = userService.findById(userId);
         Board board = new Board(request.getTitle(), request.getContent(), project, user);
-        boardRepository.save(board);
+        return boardRepository.save(board);
     }
 
 
