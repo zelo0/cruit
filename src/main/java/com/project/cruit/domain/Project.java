@@ -3,6 +3,8 @@ package com.project.cruit.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.status.ProjectStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Project extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

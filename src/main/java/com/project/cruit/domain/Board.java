@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -32,7 +33,6 @@ public class Board {
     private Project project;
 
     public Board(String title, String content, Project project, User writer) {
-        this.id = id;
         this.title = title;
         this.content = content;
         this.writer = writer;
