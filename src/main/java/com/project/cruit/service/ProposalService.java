@@ -2,11 +2,11 @@ package com.project.cruit.service;
 
 import com.project.cruit.domain.User;
 import com.project.cruit.domain.proposal.Proposal;
-import com.project.cruit.domain.UserPart;
 import com.project.cruit.domain.proposal.TopProposal;
 import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.domain.status.ProposalStatus;
 import com.project.cruit.exception.AlreadyClosedPartException;
+import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.repository.ProposalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -73,5 +73,13 @@ public class ProposalService {
     public List<Proposal> getReceivedProposalsOfUser(Long userId) {
         User user = userService.findById(userId);
         return proposalRepository.findAllByReceiver(user);
+    }
+
+    public void checkAuthorityToPropose(Long partId, Long proposerId) {
+        // 유저에게 제안할 수 있는 권한이 있는가? 프로젝트 생성자 / 파트 리더
+        Boolean hasAuthority = proposalRepository.isAvailableToProposeToUser(partId, proposerId) > 0L;
+        if (!hasAuthority) {
+            throw new NotPermitException("프로젝트 제안자 또는 파트 리더만 가능합니다");
+        }
     }
 }

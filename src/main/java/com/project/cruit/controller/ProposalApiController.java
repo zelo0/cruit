@@ -52,8 +52,9 @@ public class ProposalApiController {
     public ResponseWrapper createProposalToUser(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToUserRequest request) {
         SessionUser.checkIsNull(sessionUser);
 
+        // 유저에게 제안할 수 있는 권한이 있는가? 프로젝트 생성자 / 파트 리더
+        proposalService.checkAuthorityToPropose(request.getPartId(), sessionUser.getId());
 
-        // 이 파트에 대한 제안을 보낼 수 있는 자격이 있는 지 확인 필요
 
         User sender = userService.findById(sessionUser.getId());
         User receiver = userService.findByName(request.getReceiverName());
@@ -69,6 +70,7 @@ public class ProposalApiController {
     public ResponseWrapper createProposalToProject(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToProjectRequest request) {
         SessionUser.checkIsNull(sessionUser);
 
+        // 본인이 속해있는 프로젝트에 참여 요청 못 하게 하기
 
 
         User sender = userService.findById(sessionUser.getId());
