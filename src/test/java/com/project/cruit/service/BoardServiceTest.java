@@ -5,6 +5,7 @@ import com.project.cruit.domain.Position;
 import com.project.cruit.domain.Project;
 import com.project.cruit.domain.User;
 import com.project.cruit.dto.CreateBoardRequest;
+import com.project.cruit.dto.ModifyBoardRequest;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.repository.BoardRepository;
 import org.junit.jupiter.api.*;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -80,6 +82,47 @@ class BoardServiceTest {
 
         // then
         assertThrows(NotHaveSessionException.class, () -> boardService.checkIsAuthor(board.getId(), anotherUserId));
+    }
+
+    @Test
+    @DisplayName("게시물 수정 - 다른 건 그대로고 content랑 title만 변경")
+    void modify() {
+        // given
+        User user = user();
+        Project project = project(user);
+        Board board = board(user, project);
+
+        ModifyBoardRequest request = new ModifyBoardRequest("changed", "changed");
+        doReturn(Optional.of(board)).when(boardRepository).findById(anyLong());
+
+        // when
+        Board returnedBoard = boardService.modifyBoard(board.getId(), request);
+
+        // then
+        // 같아야 함
+        assertThat(returnedBoard.getId()).isEqualTo(board.getId());
+        assertThat(returnedBoard.getWriter()).isEqualTo(board.getWriter());
+        assertThat(returnedBoard.getProject()).isEqualTo(board.getProject());
+
+        // 변경돼야 함
+        assertThat(returnedBoard.getContent()).isEqualTo(request.getContent());
+        assertThat(returnedBoard.getTitle()).isEqualTo(request.getTitle());
+    }
+
+    @Test
+    @DisplayName("repository의 delete 호출")
+    void callDelete() {
+        // given
+        User user = user();
+        Project project = project(user);
+        Board board = board(user, project);
+        doReturn(Optional.of(board)).when(boardRepository).findById(anyLong());
+
+        // when
+        boardService.deleteBoard(board.getId());
+
+        // then
+        verify(boardRepository, times(1)).delete(any(Board.class));
     }
 
 
