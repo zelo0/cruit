@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotPermitException.class)
     public ResponseEntity<SimpleMessageBody> handleNotPermitException(Exception e) {
         log.error(e.toString());
-        return new ResponseEntity(new SimpleMessageBody("권한이 없습니다"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity(new SimpleMessageBody(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     // optional 객체에 들은 게 없을 때 get을 호출할 때, ....
