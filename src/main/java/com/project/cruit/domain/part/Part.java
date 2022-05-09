@@ -70,7 +70,7 @@ public abstract class Part {
 
     public void removeMember(UserPart userPart, User member)
     {
-        member.getUserParts().remove(userPart);
+//        member.getUserParts().remove(userPart);
         this.userParts.remove(userPart);
     };
 }
