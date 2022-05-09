@@ -48,9 +48,7 @@ public class PartService {
     public void modifyUsingStacks(Part part, List<Stack> stacks) {
         // 초기화 시킨 뒤 다시 채우기
         part.getPartStacks().clear();
-        for (Stack stack : stacks) {
-            part.getPartStacks().add(new PartStack(part, stack));
-        }
+        part.addStacks(stacks);
     }
 
     @Transactional
@@ -65,8 +63,9 @@ public class PartService {
     @Transactional
     public void deleteMember(Part part, Long memberId) {
         User member = userService.findById(memberId);
-        UserPart target = userPartService.findByPartAndUser(part, member);
-        part.getUserParts().remove(target);
+        UserPart userPart = userPartService.findByPartAndUser(part, member);
+        part.removeMember(userPart, member);
+//        part.getUserParts().remove(userPart);
         // 파트에서 추방됐다는 notification 보냄
         notificationService.createNonReferenceNotification(member, "'" + part.getProject().getName() + "'" + "프로젝트에서 추방됐습니다");
     }
