@@ -43,6 +43,7 @@ public class NotificationService {
     }
 
     /* 참조할 id가 없는, 메시지만 있는 notification 생성 후 insert */
+    @Transactional
     public void createNonReferenceNotification(User subject, String message) {
         notificationRepository.save(new Notification(subject, message));
     }
