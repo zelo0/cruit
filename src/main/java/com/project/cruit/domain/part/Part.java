@@ -54,10 +54,23 @@ public abstract class Part {
     }
 
     public void addStack(Stack stack) {
-        partStacks.add(new PartStack(this, stack));}
+        partStacks.add(new PartStack(this, stack));
+    }
+
+    public void addStacks(List<Stack> stacks) {
+        for (Stack stack : stacks) {
+            this.partStacks.add(new PartStack(this, stack));
+        }
+    }
 
     // 이 파트에 리더가 있는 지 리턴
     public Boolean hasPartLeader() {
         return this.userParts.stream().anyMatch(UserPart::getIsLeader);
     }
+
+    public void removeMember(UserPart userPart, User member)
+    {
+        member.getUserParts().remove(userPart);
+        this.userParts.remove(userPart);
+    };
 }
