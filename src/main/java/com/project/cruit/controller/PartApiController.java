@@ -71,7 +71,7 @@ public class PartApiController {
 
         if (!sessionUser.getNickname().equals(part.getProject().getProposer().getName()) &&
                 !sessionUser.getNickname().equals(leaderName)) {
-            throw new NotPermitException();
+            throw new NotPermitException("프로젝트의 제안자 또는 파트 리더만 가능합니다");
         }
         //
     }

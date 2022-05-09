@@ -100,7 +100,7 @@ public class ProjectService {
     public void checkIsMember(Long projectId, Long userId) {
         Long isMemberInLong =  projectRepository.isMemberInLong(projectId, userId);
         if (isMemberInLong < 1L) {
-            throw new NotPermitException();
+            throw new NotPermitException("멤버만 가능합니다");
         }
     }
 

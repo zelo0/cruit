@@ -65,7 +65,7 @@ public class ProjectApiController {
         // 프로젝트 제안자가 아닌데 접근하려 하면 exception
         Project targetProject = projectService.findById(projectId);
         if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("프로젝트 제안자만 가능합니다");
         }
 
         return new ResponseWrapper(new GetProjectSimpleResponse(targetProject));
@@ -93,7 +93,7 @@ public class ProjectApiController {
         Project targetProject = projectService.findById(request.getId());
 
         if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("프로젝트 제안자만 수정 가능합니다");
         }
 
         Long afterChangeProjectId = projectService.modifyText(request.getId(), request.getName(), request.getDescription());
@@ -110,7 +110,7 @@ public class ProjectApiController {
         Project targetProject = projectService.findById(request.getId());
 
         if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("프로젝트 제안자만 수정 가능합니다");
         }
 
         projectService.modifyStatus(request.getId(), request.getStatus());
@@ -146,7 +146,7 @@ public class ProjectApiController {
         Project targetProject = projectService.findById(projectId);
 
         if (!targetProject.getProposer().getId().equals(sessionUser.getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("프로젝트 제안자만 삭제 가능합니다");
         }
 
         projectService.delete(targetProject);

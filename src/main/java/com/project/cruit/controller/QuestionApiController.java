@@ -69,7 +69,7 @@ public class QuestionApiController {
         // 본인의 질문인지 확인
         Question question = questionService.findById(questionId);
         if (!sessionUser.getId().equals(question.getQuestioner().getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("본인의 댓글만 수정 가능합니다");
         }
 
         questionService.modifyContent(question, request.getContent());
@@ -85,7 +85,7 @@ public class QuestionApiController {
         // 본인의 질문인지 확인
         Question question = questionService.findById(questionId);
         if (!sessionUser.getId().equals(question.getQuestioner().getId())) {
-            throw new NotPermitException();
+            throw new NotPermitException("본인의 댓글만 삭제 가능합니다");
         }
 
         questionService.delete(question);
