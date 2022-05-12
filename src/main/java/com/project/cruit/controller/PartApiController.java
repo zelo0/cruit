@@ -92,11 +92,14 @@ public class PartApiController {
             involvedParts.add(targetPart);
         }
 
-        // 내가 파트 리더인 파트들
-        List<UserPart> userParts = targetUser.getUserParts();
-        for (UserPart userPart : userParts) {
-            if (userPart.getIsLeader()) {
-                involvedParts.add(userPart.getPart());
+        // 내 포지션이랑 position이 같으면
+        if (position.equals(targetUser.getPosition())) {
+            // 내가 파트 리더인 파트들
+            List<UserPart> userParts = targetUser.getUserParts();
+            for (UserPart userPart : userParts) {
+                if (userPart.getIsLeader()) {
+                    involvedParts.add(userPart.getPart());
+                }
             }
         }
 
