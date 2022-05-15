@@ -14,8 +14,8 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     List<Proposal> findAllByReceiver(User user);
 
     // 유저에게 제안할 수 있는 권한이 있는가? 프로젝트 생성자 / 파트 리더
-    @Query("select count(up.id) " +
-            "from UserPart up join up.part pa join pa.project pr " +
+    @Query("select count(*) " +
+            "from Part pa left join pa.userParts up join pa.project pr " +
             "where " +
             "pa.id = :partId and (up.isLeader = true or pr.proposer.id = :proposerId)")
     Long isAvailableToProposeToUser(@Param("partId")Long partId, @Param("proposerId")Long proposerId);

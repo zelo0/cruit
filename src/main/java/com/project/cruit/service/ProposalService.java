@@ -21,12 +21,17 @@ public class ProposalService {
     private final ProposalRepository proposalRepository;
     private final NotificationService notificationService;
     private final UserService userService;
+    private final MailService mailService;
 
     /* 제안을 생성하면서 notification도 생성 */
     @Transactional
     public void saveAndMakeNotification(Proposal proposal, String message) {
         proposalRepository.save(proposal);
+
         notificationService.createProposalNotification(proposal, proposal.getReceiver(), message);
+
+        // 제안을 받는 사람에게 제안이 왔다고 메일 보내기
+        mailService.sendProposalMail(proposal.getReceiver().getEmail(), message);
     }
 
     @Transactional
