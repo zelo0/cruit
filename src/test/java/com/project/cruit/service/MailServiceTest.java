@@ -3,21 +3,21 @@ package com.project.cruit.service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.mockito.ArgumentMatchers.any;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(classes = {MailService.class, MailSenderAutoConfiguration.class})
+@ExtendWith(MockitoExtension.class)
 class MailServiceTest {
-    @Autowired
+    @InjectMocks
     private MailService mailService;
+
+    @Mock
+    private JavaMailSenderImpl javaMailSender;
 
 
     @Test
@@ -29,5 +29,6 @@ class MailServiceTest {
         mailService.sendProposalMail("greenman7@gmail.com", "test 이메일");
 
         // then
+        Mockito.verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 }
