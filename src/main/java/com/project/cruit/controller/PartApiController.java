@@ -8,6 +8,7 @@ import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserPart;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.Stack;
+import com.project.cruit.dto.DelegateLeaderRequest;
 import com.project.cruit.dto.ResponseWrapper;
 import com.project.cruit.dto.SimpleMessageBody;
 import com.project.cruit.dto.SimpleUserInfo;
@@ -22,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -115,6 +117,8 @@ public class PartApiController {
     /* part에서 사용하는 stack 변경 */
     @PatchMapping("/{partId}/stacks")
     public ResponseWrapper modifyStacks(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStackRequest request) {
+        SessionUser.checkIsNull(sessionUser);
+
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
 
@@ -125,6 +129,8 @@ public class PartApiController {
     /* part의 상태 변경 */
     @PatchMapping("/{partId}/status")
     public ResponseWrapper modifyStatus(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStatusRequest request) {
+        SessionUser.checkIsNull(sessionUser);
+
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
 
@@ -136,6 +142,8 @@ public class PartApiController {
     @DeleteMapping("/{partId}/members/{memberId}")
     public ResponseWrapper deleteMember(@PathVariable Long partId, @PathVariable Long memberId,
                                         @CurrentUser SessionUser sessionUser) {
+        SessionUser.checkIsNull(sessionUser);
+
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
 
@@ -146,6 +154,18 @@ public class PartApiController {
 
         partService.deleteMember(part, memberId);
         return new ResponseWrapper(new SimpleMessageBody("멤버를 방출했습니다"));
+    }
+
+    // part 리더 변경
+    @PatchMapping("/leader")
+    public ResponseWrapper delegateLeader(@CurrentUser SessionUser sessionUser, @RequestBody @Valid DelegateLeaderRequest request) {
+        SessionUser.checkIsNull(sessionUser);
+
+        // 프로젝트 제안자인지 체크
+
+
+        partService.delegateLeader(request);
+        return new ResponseWrapper(new SimpleMessageBody("리더를 변경했습니다"));
     }
 
 

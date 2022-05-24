@@ -36,4 +36,12 @@ public class UserPartService {
     public List<UserPart> findAllByUser(User user) {
         return userPartRepository.findAllByUser(user);
     }
+
+    public UserPart findLeaderUserPartByPartId(Long partId) {
+        return userPartRepository.findLeaderUserPartByPartId(partId);
+    }
+
+    public UserPart findByPartIdAndUserId(Long partId, Long userId) {
+        return userPartRepository.findByPartIdAndUserId(partId, userId);
+    }
 }

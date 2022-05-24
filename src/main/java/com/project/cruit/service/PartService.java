@@ -4,6 +4,7 @@ import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.domain.part.Part;
+import com.project.cruit.dto.DelegateLeaderRequest;
 import com.project.cruit.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -83,5 +84,15 @@ public class PartService {
             default:
                 return getDesignPart(project);
         }
+    }
+
+    @Transactional
+    public void delegateLeader(DelegateLeaderRequest request) {
+        UserPart prevLeaderUserPart = userPartService.findLeaderUserPartByPartId(request.getPartId());
+        if (prevLeaderUserPart != null) {
+            prevLeaderUserPart.setIsLeader(false);
+        }
+        UserPart nextLeaderUserPart = userPartService.findByPartIdAndUserId(request.getPartId(), request.getNewLeaderId());
+        nextLeaderUserPart.setIsLeader(true);
     }
 }
