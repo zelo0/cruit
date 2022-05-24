@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class InitDB {
     private final InitStackDB initStackDB;
-    private final InitService initService;
+//    private final InitService initService;
 
     @PostConstruct
     public void initStackDB() {
