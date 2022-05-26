@@ -7,10 +7,12 @@ import org.apache.tomcat.util.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
@@ -68,6 +70,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<SimpleMessageBody> handleInvalidPageOffsetException(Exception e){
         log.error(e.toString());
         return ResponseEntity.badRequest().body(new SimpleMessageBody("유효하지 않은 페이지이입니다"));
+    }
+
+    // 이메일 보내는 중 발생
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<SimpleMessageBody> handlerMessagingException(Exception e) {
+        log.error(e.toString());
+        return ResponseEntity.internalServerError().body(new SimpleMessageBody("메시지 전달 중 에러가 발생했습니다"));
     }
     
     @ExceptionHandler(IOException.class)

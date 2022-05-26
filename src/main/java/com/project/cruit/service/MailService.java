@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 @Slf4j
 @Service
@@ -24,14 +28,18 @@ public class MailService {
     * 메일 제목이랑 내용은 메시지 바탕으로 생성
     * */
     @Async
-    public void sendProposalMail(String to, String message) {
-        log.info("sent proposal email");
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setFrom(serviceEmail);
-        mail.setTo(to);
-        mail.setSubject("[cruitapp] " + message);
-        mail.setText(message + " https://app.cruitapp.com/proposals/me 에 접속해서 지금 확인해보세요.");
-        mailSender.send(mail);
+    public void sendProposalMail(String to, String message) throws MessagingException {
+        log.info("started to send proposal email from " + serviceEmail + " to " + to);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+
+        messageHelper.setFrom(serviceEmail);
+        messageHelper.setTo(to);
+        messageHelper.setSubject("[cruitapp] 나와 프로젝트를 함께하고 싶어하는 사람이 있어요. 어서 확인해보세요");
+        messageHelper.setText("<p>" + message + "</p>" +
+                "<p><a href='https://app.cruitapp.com/proposals/me'>여기</a>에 접속해서 바로 확인해보세요.</p>", true);
+
+        mailSender.send(mimeMessage);
     }
 
 }

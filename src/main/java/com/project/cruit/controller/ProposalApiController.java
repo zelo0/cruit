@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -49,7 +50,7 @@ public class ProposalApiController {
 
     // 프로젝트 관계자가 유저에게 보내는 프로젝트 함께하자는 요청
     @PostMapping("")
-    public ResponseWrapper createProposalToUser(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToUserRequest request) {
+    public ResponseWrapper createProposalToUser(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToUserRequest request) throws MessagingException {
         SessionUser.checkIsNull(sessionUser);
 
         // 유저에게 제안할 수 있는 권한이 있는가? 프로젝트 생성자 / 파트 리더
@@ -67,7 +68,7 @@ public class ProposalApiController {
 
     // 유저가 프로젝트 관계자에게 보내는 프로젝트에 참여하고 싶다는 요청
     @PostMapping("/project")
-    public ResponseWrapper createProposalToProject(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToProjectRequest request) {
+    public ResponseWrapper createProposalToProject(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToProjectRequest request) throws MessagingException {
         SessionUser.checkIsNull(sessionUser);
 
         // 본인이 속해있는 프로젝트에 참여 요청 못 하게 하기

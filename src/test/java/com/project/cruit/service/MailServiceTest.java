@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import javax.mail.MessagingException;
+
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,13 +25,15 @@ class MailServiceTest {
 
     @Test
     @DisplayName("이메일 보내기 성공")
-    void sendEmail_success() {
+    void sendEmail_success() throws MessagingException {
         // given
 
         // when
-        mailService.sendProposalMail("greenman7@gmail.com", "test 이메일");
+        mailService.sendProposalMail("mapaldeveloper@gmail.com", "test 이메일");
 
         // then
         Mockito.verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
+
+
 }

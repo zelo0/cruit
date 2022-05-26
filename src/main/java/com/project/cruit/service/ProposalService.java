@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 @Service
@@ -25,7 +26,7 @@ public class ProposalService {
 
     /* 제안을 생성하면서 notification도 생성 */
     @Transactional
-    public void saveAndMakeNotification(Proposal proposal, String message) {
+    public void saveAndMakeNotification(Proposal proposal, String message) throws MessagingException {
         proposalRepository.save(proposal);
 
         notificationService.createProposalNotification(proposal, proposal.getReceiver(), message);
