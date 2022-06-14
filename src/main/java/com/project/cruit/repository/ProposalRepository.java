@@ -5,9 +5,11 @@ import com.project.cruit.domain.proposal.Proposal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     List<Proposal> findAllBySender(User user);
 
