@@ -14,7 +14,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-@Builder
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,6 +86,15 @@ public class User extends BaseTimeEntity {
                 this.position = Position.DESIGN;
                 break;
         }
+    }
+
+    @Builder
+    public User(Long id, String email, String password, String name, Position position) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.position = position;
     }
 
     @Override

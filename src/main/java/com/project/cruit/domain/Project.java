@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 public class Project extends BaseTimeEntity {
     @Id
@@ -54,6 +53,14 @@ public class Project extends BaseTimeEntity {
     }
 
     public Project(User proposer, String name, String description) {
+        this.proposer = proposer;
+        this.name = name;
+        this.description = description;
+    }
+
+    @Builder
+    public Project(Long id, User proposer, String name, String description) {
+        this.id = id;
         this.proposer = proposer;
         this.name = name;
         this.description = description;
