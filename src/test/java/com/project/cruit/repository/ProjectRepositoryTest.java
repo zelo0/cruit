@@ -67,10 +67,11 @@ class ProjectRepositoryTest {
         testEntityManager.persist(userPart);
 
         // when
-        Long result = projectRepository.isMemberInLong(project.getId(), user.getId());
+        Project result = projectRepository.getProjectIfMember(project.getId(), user.getId());
+
 
         // then
-        assertThat(result).isEqualTo(1);
+        assertThat(project).isNotNull();
     }
 
     private User user() {

@@ -26,7 +26,7 @@ class ProjectServiceTest {
         // given
         Long projectId = 10L;
         Long userId = 1L;
-        doReturn(0L).when(projectRepository).isMemberInLong(projectId, userId);
+        doReturn(null).when(projectRepository).getProjectIfMember(projectId, userId);
 
         // when
         RuntimeException exception = assertThrows(NotPermitException.class, () -> projectService.checkIsMember(projectId, userId));
