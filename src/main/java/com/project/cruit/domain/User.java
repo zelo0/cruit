@@ -68,8 +68,11 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
     private List<Proposal> receivedProposals = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Board> boards = new ArrayList<>();
 
     public User(String email, String password, String name, String position) {
         this.email = email;
@@ -91,6 +94,14 @@ public class User extends BaseTimeEntity {
     @Builder
     public User(Long id, String email, String password, String name, Position position) {
         this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.position = position;
+    }
+
+    @Builder
+    public User(String email, String password, String name, Position position) {
         this.email = email;
         this.password = password;
         this.name = name;
