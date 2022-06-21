@@ -3,6 +3,7 @@ package com.project.cruit.authentication;
 import com.project.cruit.domain.User;
 import com.project.cruit.exception.NotHaveSessionException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+@Slf4j
 public class SessionUser implements UserDetails {
     private Long id;
     private String email;
@@ -34,6 +36,7 @@ public class SessionUser implements UserDetails {
 
     public static void checkIsNull(SessionUser sessionUser) {
         if (sessionUser == null) {
+            log.error("session이 없습니다");
             throw new NotHaveSessionException();
         }
     }
