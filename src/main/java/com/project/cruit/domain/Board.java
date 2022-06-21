@@ -45,4 +45,12 @@ public class Board {
         this.writer = writer;
         this.project = project;
     }
+
+    @Builder
+    public Board(String title, String content, User writer, Project project) {
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+        this.project = project;
+    }
 }

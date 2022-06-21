@@ -52,6 +52,7 @@ public class Project extends BaseTimeEntity {
     public Project() {
     }
 
+    @Builder
     public Project(User proposer, String name, String description) {
         this.proposer = proposer;
         this.name = name;
