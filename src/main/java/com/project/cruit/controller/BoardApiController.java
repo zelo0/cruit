@@ -1,5 +1,6 @@
 package com.project.cruit.controller;
 
+import com.project.cruit.advice.TrackExecutionTime;
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.Board;
@@ -7,10 +8,12 @@ import com.project.cruit.dto.*;
 import com.project.cruit.service.BoardService;
 import com.project.cruit.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/boards")
@@ -18,6 +21,7 @@ public class BoardApiController {
     private final ProjectService projectService;
     private final BoardService boardService;
 
+    @TrackExecutionTime
     @PostMapping("")
     public ResponseWrapper<SimpleMessageBody> createBoard(@RequestBody @Valid CreateBoardRequest request, @CurrentUser SessionUser sessionUser) {
         SessionUser.checkIsNull(sessionUser);
