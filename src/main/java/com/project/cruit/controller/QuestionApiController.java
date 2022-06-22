@@ -36,7 +36,6 @@ public class QuestionApiController {
     // 질문 등록
     @PostMapping("")
     public ResponseWrapper createQuestion(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateQuestionRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
         Question question = new Question(userService.findById(sessionUser.getId()), request.getContent(),
@@ -48,7 +47,6 @@ public class QuestionApiController {
     // 질문의 질문 등록
     @PostMapping("/sub")
     public ResponseWrapper createSubQuestion(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateSubQuestionRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
         Question parentQuestion = questionService.findById(request.getParentId());
@@ -62,7 +60,6 @@ public class QuestionApiController {
     // 질문 수정
     @PatchMapping("/{questionId}")
     public ResponseWrapper modifyQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId, @RequestBody @Valid ModifyQuestionRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
 
@@ -79,7 +76,6 @@ public class QuestionApiController {
     // 질문 삭제
     @DeleteMapping("/{questionId}")
     public ResponseWrapper deleteQuestion(@CurrentUser SessionUser sessionUser, @PathVariable Long questionId) {
-        SessionUser.checkIsNull(sessionUser);
 
 
         // 본인의 질문인지 확인

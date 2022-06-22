@@ -18,8 +18,6 @@ public class ImagesApiController {
 
     @PostMapping("/api/v1/images")
     public ResponseWrapper<UploadImageResponseDto> uploadImageForPost(@RequestPart("file") MultipartFile file, @CurrentUser SessionUser sessionUser) throws IOException {
-        SessionUser.checkIsNull(sessionUser);
-
 
         // s3에 업로드
         String fileUrl = s3UploaderService.upload(file, "posts");

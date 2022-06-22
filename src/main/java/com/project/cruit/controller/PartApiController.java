@@ -1,5 +1,6 @@
 package com.project.cruit.controller;
 
+import com.project.cruit.aop.annotation.CheckSessionNotNull;
 import com.project.cruit.authentication.CurrentUser;
 import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.PartStack;
@@ -55,10 +56,8 @@ public class PartApiController {
     }
 
     /* 수정 권한이 있는 사용자인지 체크하는 함수 */
+    @CheckSessionNotNull
     private void checkModifyingAuthority(SessionUser sessionUser, Part part) {
-        SessionUser.checkIsNull(sessionUser);
-
-
 
         // 해당 project의 proposer도 해당 part의 리더도 아니면 권한 X
         List<UserPart> userParts = part.getUserParts();
@@ -117,7 +116,6 @@ public class PartApiController {
     /* part에서 사용하는 stack 변경 */
     @PatchMapping("/{partId}/stacks")
     public ResponseWrapper modifyStacks(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStackRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
@@ -129,7 +127,6 @@ public class PartApiController {
     /* part의 상태 변경 */
     @PatchMapping("/{partId}/status")
     public ResponseWrapper modifyStatus(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStatusRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
@@ -142,7 +139,6 @@ public class PartApiController {
     @DeleteMapping("/{partId}/members/{memberId}")
     public ResponseWrapper deleteMember(@PathVariable Long partId, @PathVariable Long memberId,
                                         @CurrentUser SessionUser sessionUser) {
-        SessionUser.checkIsNull(sessionUser);
 
         Part part = partService.findById(partId);
         checkModifyingAuthority(sessionUser, part);
@@ -159,7 +155,6 @@ public class PartApiController {
     // part 리더 변경
     @PatchMapping("/leader")
     public ResponseWrapper delegateLeader(@CurrentUser SessionUser sessionUser, @RequestBody @Valid DelegateLeaderRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
         // 프로젝트 제안자인지 체크
 

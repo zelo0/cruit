@@ -51,7 +51,6 @@ public class ProposalApiController {
     // 프로젝트 관계자가 유저에게 보내는 프로젝트 함께하자는 요청
     @PostMapping("")
     public ResponseWrapper createProposalToUser(@CurrentUser SessionUser sessionUser,  @RequestBody @Valid CreateProposalToUserRequest request) throws MessagingException {
-        SessionUser.checkIsNull(sessionUser);
 
         // 유저에게 제안할 수 있는 권한이 있는가? 프로젝트 생성자 / 파트 리더
         proposalService.checkAuthorityToPropose(request.getPartId(), sessionUser.getId());

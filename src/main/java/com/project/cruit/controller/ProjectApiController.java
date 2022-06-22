@@ -85,7 +85,6 @@ public class ProjectApiController {
 
     @PatchMapping("/text")
     public ResponseWrapper setProjectText(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectTextRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
 
@@ -102,7 +101,6 @@ public class ProjectApiController {
 
     @PatchMapping("/status")
     public ResponseWrapper setProjectStatus(@CurrentUser SessionUser sessionUser, @RequestBody SetProjectStatusRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
 
@@ -119,7 +117,6 @@ public class ProjectApiController {
 
     @PostMapping("")
     public ResponseWrapper createProject(@CurrentUser SessionUser sessionUser, @RequestBody @Valid CreateProjectRequest request) {
-        SessionUser.checkIsNull(sessionUser);
 
 
 
@@ -139,7 +136,6 @@ public class ProjectApiController {
     
     @DeleteMapping("/{projectId}")
     public ResponseWrapper deleteProject(@PathVariable Long projectId, @CurrentUser SessionUser sessionUser) {
-        SessionUser.checkIsNull(sessionUser);
 
 
         // 프로젝트 제안자가 아닌데 삭제하려 하면 exception
