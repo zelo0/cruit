@@ -1,4 +1,4 @@
-package com.project.cruit.advice;
+package com.project.cruit.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

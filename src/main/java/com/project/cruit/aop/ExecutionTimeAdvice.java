@@ -1,4 +1,4 @@
-package com.project.cruit.advice;
+package com.project.cruit.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnExpression("${aspect.enabled:true}")
 public class ExecutionTimeAdvice {
 
-    @Around("@annotation(TrackExecutionTime)")
+    @Around("@annotation(com.project.cruit.aop.annotation.TrackExecutionTime)")
     public Object executionTime(ProceedingJoinPoint point) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object object = point.proceed();
