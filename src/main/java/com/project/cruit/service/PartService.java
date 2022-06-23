@@ -1,16 +1,22 @@
 package com.project.cruit.service;
 
+import com.project.cruit.aop.annotation.CheckSessionNotNull;
+import com.project.cruit.authentication.SessionUser;
 import com.project.cruit.domain.*;
 import com.project.cruit.domain.stack.Stack;
 import com.project.cruit.domain.status.PartStatus;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.dto.DelegateLeaderRequest;
+import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.repository.PartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +100,46 @@ public class PartService {
         }
         UserPart nextLeaderUserPart = userPartService.findByPartIdAndUserId(request.getPartId(), request.getNewLeaderId());
         nextLeaderUserPart.setIsLeader(true);
+    }
+
+    // 연관된 user 데이터 fetch join
+    public Part findByIdWithUsers(Long partId) {
+        return partRepository.findByIdWithUsers(partId);
+    }
+
+    // 연관된 stack 데이터, project를 fetch join
+    public Part findByIdWithProjectAndStacks(Long partId) {
+        return partRepository.findByIdWithProjectAndStacks(partId);
+    }
+
+
+    /* 수정 권한이 있는 사용자인지 체크하는 함수 */
+    @CheckSessionNotNull
+    public void checkModifyingAuthority(SessionUser sessionUser, Part part) {
+
+        // 해당 project의 proposer도 해당 part의 리더도 아니면 권한 X
+        List<UserPart> userParts = part.getUserParts();
+        String leaderName = null;
+
+        for (UserPart userPart : userParts) {
+            if (userPart.getIsLeader()) {
+                leaderName = userPart.getUser().getName();
+                break;
+            }
+        }
+
+        if (!sessionUser.getNickname().equals(part.getProject().getProposer().getName()) &&
+                !sessionUser.getNickname().equals(leaderName)) {
+            throw new NotPermitException("프로젝트의 제안자 또는 파트 리더만 가능합니다");
+        }
+        //
+    }
+
+    public List<Part> findPartByPositionInMyProject(String position, Long userId) {
+        return partRepository.findPartsByPositionAndProjectProposer(position, userId);
+    }
+
+    public List<Part> findPartsByPartLeader(Long userId) {
+        return partRepository.findPartsByPartLeader(userId);
     }
 }

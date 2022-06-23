@@ -9,10 +9,7 @@ import com.project.cruit.domain.User;
 import com.project.cruit.domain.UserPart;
 import com.project.cruit.domain.part.Part;
 import com.project.cruit.domain.stack.Stack;
-import com.project.cruit.dto.DelegateLeaderRequest;
-import com.project.cruit.dto.ResponseWrapper;
-import com.project.cruit.dto.SimpleMessageBody;
-import com.project.cruit.dto.SimpleUserInfo;
+import com.project.cruit.dto.*;
 import com.project.cruit.exception.NotHaveSessionException;
 import com.project.cruit.exception.NotPermitException;
 import com.project.cruit.exception.TrialRemovingSelfException;
@@ -47,54 +44,65 @@ public class PartApiController {
     /* 파트를 수정하기 위해 GET */
     @GetMapping("/{partId}")
     public ResponseWrapper getPart(@CurrentUser SessionUser sessionUser, @PathVariable Long partId) {
-        Part part = partService.findById(partId);
-        checkModifyingAuthority(sessionUser, part);
+        // 성능 테스트
+//        Part part = partService.findById(partId);
+
+        // fetch join
+        // 두 번으로 나눠서 요청하는 이유는 multiple bag exception 때문
+        // 여러 연관 리스트를 한꺼번에 fetch join 하는 게 불가
+        // 순서가 중요! partStack이 존재하지 않으면 쿼리의 결과는 null
+        Part part = partService.findByIdWithUsers(partId);
+        partService.findByIdWithProjectAndStacks(partId);
+
+        partService.checkModifyingAuthority(sessionUser, part);
 
         // selectableStacks (포지션 따라 다름)
         return new ResponseWrapper(new GetPartResponse(part, stackService.findAllByPosition(part.getPosition())));
 
     }
 
-    /* 수정 권한이 있는 사용자인지 체크하는 함수 */
+
+
     @CheckSessionNotNull
-    private void checkModifyingAuthority(SessionUser sessionUser, Part part) {
-
-        // 해당 project의 proposer도 해당 part의 리더도 아니면 권한 X
-        List<UserPart> userParts = part.getUserParts();
-        String leaderName = null;
-
-        for (UserPart userPart : userParts) {
-            if (userPart.getIsLeader()) {
-                leaderName = userPart.getUser().getName();
-                break;
-            }
-        }
-
-        if (!sessionUser.getNickname().equals(part.getProject().getProposer().getName()) &&
-                !sessionUser.getNickname().equals(leaderName)) {
-            throw new NotPermitException("프로젝트의 제안자 또는 파트 리더만 가능합니다");
-        }
-        //
-    }
-
     @GetMapping("/involved/{position}")
-    public ResponseWrapper getInvolvedParts(@CurrentUser SessionUser sessionUser, @PathVariable String position) {
-        SessionUser.checkIsNull(sessionUser);
-
+    public ResponseWrapper<GetInvolvePartsResponse> getInvolvedParts(@CurrentUser SessionUser sessionUser, @PathVariable String position) {
 
         User targetUser = userService.findById(sessionUser.getId());
 
+//        Set<Part> involvedParts = new HashSet<>();
+        Set<PartDto> involvedPartDtos = new HashSet<>();
+
+        // fetch join 쿼리로 튜닝
+        // 50개
+        // no fetch join -264ms 277ms
+        // fetch join - 273ms
+        // count 수를 줄여서 52ms (fetch join)
+
+        // 100개 파트의 리더인 경우
+        // no fetch join (여러번 쿼리) - 377ms
+        // fetch join - 314ms
+
+        // 500개 파트의 리더인 경우
+        // no fetch join - 3684ms 4292ms
+        // fetch join - 4305ms 4431ms
+
+
         // 내가 제안한 프로젝트의 파트 중 position에 맞는 파트
-        Set<Part> involvedParts = new HashSet<>();
-        List<Project> proposedProjects = targetUser.getProposedProjects();
+    /*    List<Project> proposedProjects = targetUser.getProposedProjects();
         for (Project proposedProject : proposedProjects) {
             Part targetPart = proposedProject.getParts().stream().filter(part -> part.getPosition().equals(position))
                     .findAny().orElse(null);
             involvedParts.add(targetPart);
-        }
+        }*/
+
+        // fetch join
+        List<Part> partByPositionInMyProject = partService.findPartByPositionInMyProject(position, sessionUser.getId());
+        involvedPartDtos.addAll(partByPositionInMyProject.stream()
+                .map(involvedPart -> new PartDto(involvedPart, userPartService.hasPartLeader(involvedPart)))
+                .collect(Collectors.toList()));
 
         // 내 포지션이랑 position이 같으면
-        if (position.equals(targetUser.getPosition())) {
+        /*if (position.equals(targetUser.getPosition().name())) {
             // 내가 파트 리더인 파트들
             List<UserPart> userParts = targetUser.getUserParts();
             for (UserPart userPart : userParts) {
@@ -102,13 +110,27 @@ public class PartApiController {
                     involvedParts.add(userPart.getPart());
                 }
             }
+        }*/
+
+        // fetch join
+        // 이 경우는 무조건 파트에 리더가 존재
+        if (position.equals(targetUser.getPosition().name())) {
+            List<Part> partsByPartLeader = partService.findPartsByPartLeader(sessionUser.getId());
+            involvedPartDtos.addAll(partsByPartLeader.stream()
+                    .map(involvedPart -> new PartDto(involvedPart, true))
+                    .collect(Collectors.toList()));
         }
 
 
+
+
+        // 파트마다 count 쿼리를 요청하는 건 비효율적!!!
         // 파트의 리더 존재 유무를 같이 넣음
+        /*
         List<PartDto> involvedPartDtos = involvedParts.stream()
                 .map(involvedPart -> new PartDto(involvedPart, userPartService.hasPartLeader(involvedPart)))
                 .collect(Collectors.toList());
+        */
 
         return new ResponseWrapper(new GetInvolvePartsResponse(involvedPartDtos));
     }
@@ -118,7 +140,7 @@ public class PartApiController {
     public ResponseWrapper modifyStacks(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStackRequest request) {
 
         Part part = partService.findById(partId);
-        checkModifyingAuthority(sessionUser, part);
+        partService.checkModifyingAuthority(sessionUser, part);
 
         partService.modifyUsingStacks(part, request.getStacks());
         return new ResponseWrapper(new SimpleMessageBody("사용하는 스택이 변경됐습니다"));
@@ -129,7 +151,7 @@ public class PartApiController {
     public ResponseWrapper modifyStatus(@PathVariable Long partId, @CurrentUser SessionUser sessionUser, @RequestBody @Valid ModifyStatusRequest request) {
 
         Part part = partService.findById(partId);
-        checkModifyingAuthority(sessionUser, part);
+        partService.checkModifyingAuthority(sessionUser, part);
 
         partService.modifyUsingStatus(part, request.getStatus());
         return new ResponseWrapper(new SimpleMessageBody("상태가 변경됐습니다"));
@@ -141,7 +163,7 @@ public class PartApiController {
                                         @CurrentUser SessionUser sessionUser) {
 
         Part part = partService.findById(partId);
-        checkModifyingAuthority(sessionUser, part);
+        partService.checkModifyingAuthority(sessionUser, part);
 
         // 본인을 지우려고 하면 막기
         if (sessionUser.getId() == memberId) {
@@ -161,75 +183,6 @@ public class PartApiController {
 
         partService.delegateLeader(request);
         return new ResponseWrapper(new SimpleMessageBody("리더를 변경했습니다"));
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    static class GetInvolvePartsResponse {
-        private List<PartDto> involvedParts;
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class PartDto {
-        private Long projectId;
-        private String projectName;
-        private String status;
-        private Long id;
-        private String position;
-        private Boolean hasLeader;
-
-        public PartDto(Part part, Boolean hasLeader) {
-            this.projectId = part.getProject().getId();
-            this.projectName = part.getProject().getName();
-            this.status = part.getStatus().name();
-            this.id = part.getId();
-            this.position = part.getPosition();
-            this.hasLeader = hasLeader;
-        }
-    }
-
-    @Data
-    static class GetPartResponse {
-        private Long id;
-        private String position;
-        private String status;
-        private List<? extends Stack> selectableStacks;
-        private List<Stack> usingStacks = new ArrayList<>();
-        private List<SimpleUserInfo> members = new ArrayList<>();
-
-        public GetPartResponse(Part part, List<? extends Stack> selectableStacks) {
-            id = part.getId();
-            position = part.getPosition();
-            status = part.getStatus().name();
-            this.selectableStacks = selectableStacks;
-
-            List<PartStack> partStacks = part.getPartStacks();
-            for (PartStack partStack : partStacks) {
-                usingStacks.add(partStack.getStack());
-            }
-
-            List<UserPart> userParts = part.getUserParts();
-            for (UserPart userPart : userParts) {
-                members.add(new SimpleUserInfo(userPart.getUser(), userPart.getIsLeader()));
-            }
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class ModifyStackRequest {
-        private List<Stack> stacks;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class ModifyStatusRequest {
-        @NotBlank
-        private String status;
     }
 
 }
